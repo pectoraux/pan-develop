@@ -1,0 +1,19 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "pluginsFile": false,
+  "fixturesFolder": false,
+  "supportFile": "cypress/support/index.js",
+  "video": false,
+  "defaultCommandTimeout": 100000,
+  "chromeWebSecurity": false,
+  "pageLoadTimeout": 100000,
+  "blockHosts": [
+    "vitals.vercel-insights.com",
+    "*sentry.io",
+    "*googletagmanager.com"
+  ],
+  "retries": {
+    "runMode": 2
+  },
+  "projectId": "bsysbi"
+}

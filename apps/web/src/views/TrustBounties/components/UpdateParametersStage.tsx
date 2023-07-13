@@ -1,0 +1,107 @@
+import { useEffect, useRef } from 'react'
+import { Flex, Grid, Box, Text, Button, Input, ErrorIcon } from '@pancakeswap/uikit'
+import { Currency } from "@pancakeswap/sdk"
+import { useTranslation } from '@pancakeswap/localization'
+import { NftToken } from 'state/cancan/types'
+import { DatePicker, DatePickerPortal } from 'views/Voting/components/DatePicker'
+import { GreyedOutContainer, Divider } from './styles'
+
+interface SetPriceStageProps {
+  continueToNextStage?: () => void
+}
+
+// Stage where user puts price for NFT they're about to put on sale
+// Also shown when user wants to adjust the price of already listed NFT
+const SetPriceStage: React.FC<any> = ({
+  state,
+  handleChange,
+  continueToNextStage,
+}) => {
+  const { t } = useTranslation()
+  const inputRef = useRef<HTMLInputElement>()
+
+  useEffect(() => {
+    if (inputRef && inputRef.current) {
+      inputRef.current.focus()
+    }
+  }, [inputRef])
+
+  return (
+    <>
+    <GreyedOutContainer>
+      <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
+        {t('New Owner address')}
+      </Text>
+      <Input
+        type="text"
+        scale="sm"
+        name='owner'
+        value={state.owner}
+        placeholder={t('input account owner address')}
+        onChange={handleChange}
+      />
+    </GreyedOutContainer>
+    <GreyedOutContainer>
+      <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
+        {t('Collection ID')}
+      </Text>
+      <Input
+        type="text"
+        scale="sm"
+        name='collectionId'
+        value={state.collectionId}
+        placeholder={t('input your collection id')}
+        onChange={handleChange}
+      />
+    </GreyedOutContainer>
+    <GreyedOutContainer>
+      <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
+        {t('Link to Avatar')}
+      </Text>
+      <Input
+        type="text"
+        scale="sm"
+        name='avatar'
+        value={state.avatar}
+        placeholder={t('input link to your avatar')}
+        onChange={handleChange}
+      />
+    </GreyedOutContainer>
+    <GreyedOutContainer>
+      <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
+        {t('Bounty Terms')}
+      </Text>
+      <Input
+        type="text"
+        scale="sm"
+        name='terms'
+        value={state.terms}
+        placeholder={t('input terms for your bounty')}
+        onChange={handleChange}
+      />
+    </GreyedOutContainer>
+    <Grid gridTemplateColumns="32px 1fr" p="16px" maxWidth="360px">
+      <Flex alignSelf="flex-start">
+        <ErrorIcon width={24} height={24} color="textSubtle" />
+      </Flex>
+      <Box>
+        <Text small color="textSubtle">
+          {t('The will update parameters of the bounty. Please read the documentation for more information on each parameter')}
+        </Text>
+      </Box>
+    </Grid>
+      <Divider />
+      <Flex flexDirection="column" px="16px" pb="16px">
+        <Button
+          mb="8px"
+          onClick={continueToNextStage}
+          // disabled={priceIsValid || adjustedPriceIsTheSame || priceIsOutOfRange}
+        >
+          {t('Update Parameters')}
+        </Button>
+      </Flex>
+    </>
+  )
+}
+
+export default SetPriceStage

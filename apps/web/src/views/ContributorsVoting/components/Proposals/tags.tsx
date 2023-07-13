@@ -1,0 +1,33 @@
+import { TagProps, Farm as FarmUI } from '@pancakeswap/uikit'
+import { ProposalState } from 'state/types'
+
+const { ClosedTag, CommunityTag, CoreTag, SoonTag, VoteNowTag } = FarmUI.Tags
+
+interface ProposalStateTagProps extends TagProps {
+  proposalState: ProposalState
+}
+
+export const ProposalStateTag: React.FC<React.PropsWithChildren<ProposalStateTagProps>> = ({
+  proposalState,
+  ...props
+}) => {
+  if (proposalState) {
+    return <VoteNowTag {...props} />
+  }
+  return <ClosedTag {...props} />
+}
+
+interface ProposalTypeTagProps extends TagProps {
+  isCoreProposal: boolean
+}
+
+export const ProposalTypeTag: React.FC<any> = ({
+  isCoreProposal,
+  ...props
+}) => {
+  if (isCoreProposal) {
+    return <CoreTag {...props} />
+  }
+
+  return <CommunityTag {...props} />
+}
