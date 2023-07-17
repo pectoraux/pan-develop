@@ -16,6 +16,7 @@ import {
   getLotteryAddress,
   getLotteryHelperAddress,
   getRandomNumberGeneratorAddress,
+  getLotteryRandomNumberGeneratorAddress,
   getFeeToAddress,
   getLotteryV2Address,
   getMasterChefAddress,
@@ -98,6 +99,7 @@ import {
   getNFTicketHelper2Address,
   getStakeMarketAddress,
   getStakeMarketNoteAddress,
+  getStakeMarketHeperAddress,
   getStakeMarketVoterAddress,
   getStakeMarketBribeAddress,
   getMarketCollectionsAddress,
@@ -151,6 +153,7 @@ import pointCenterIfo from 'config/abi/pointCenterIfo.json'
 import lotteryV2Abi from 'config/abi/lotteryV2.json'
 import lotteryAbi from 'config/abi/lottery.json'
 import randomNumberGeneratorAbi from 'config/abi/randomNumberGenerator.json'
+import lotteryRandomNumberGeneratorAbi from 'config/abi/lotteryRandomNumberGenerator.json'
 import lotteryHelperAbi from 'config/abi/lotteryHelper.json'
 import masterChef from 'config/abi/masterchef.json'
 import masterChefV1 from 'config/abi/masterchefV1.json'
@@ -257,6 +260,7 @@ import tustbountiesvoterAbi from 'config/abi/trustbountiesvoter.json'
 import tustbountiesAbi from 'config/abi/trustbounties.json'
 import tustbountiesHelperAbi from 'config/abi/trustbountiesHelper.json'
 import stakemarketNoteAbi from 'config/abi/stakemarketnote.json'
+import stakemarketHelperAbi from 'config/abi/stakemarkethelper.json'
 import stakemarketBribeAbi from 'config/abi/stakemarketbribe.json'
 import stakemarketVoterAbi from 'config/abi/stakemarketvoter.json'
 import valuepoolHelperAbi from 'config/abi/valuepoolhelper.json'
@@ -356,6 +360,7 @@ import type {
   NfticketHelper2,
   Stakemarket,
   Stakemarketnote,
+  Stakemarkethelper,
   Stakemarketbribe,
   Stakemarketvoter,
   Trustbounties,
@@ -416,6 +421,7 @@ import type {
   BettingHelper,
   BettingMinter,
   RandomNumberGenerator,
+  LotteryRandomNumberGenerator,
 } from 'config/abi/types'
 import { ChainId } from '@pancakeswap/sdk'
 
@@ -498,6 +504,9 @@ export const getLotteryContract = (signer?: Signer | Provider) => {
 }
 export const getRandomNumberGenerator = (signer?: Signer | Provider) => {
   return getContract({ abi: randomNumberGeneratorAbi, address: getRandomNumberGeneratorAddress(), signer }) as RandomNumberGenerator
+}
+export const getLotteryRandomNumberGenerator = (signer?: Signer | Provider) => {
+  return getContract({ abi: lotteryRandomNumberGeneratorAbi, address: getLotteryRandomNumberGeneratorAddress(), signer }) as LotteryRandomNumberGenerator
 }
 export const getMasterchefContract = (signer?: Signer | Provider, chainId?: number) => {
   return getContract({ abi: masterChef, address: getMasterChefAddress(chainId), signer }) as Masterchef
@@ -1232,6 +1241,14 @@ export const getStakeMarketNoteContract = (signer?: Signer | Provider) => {
     address: getStakeMarketNoteAddress(), 
     signer
   }) as Stakemarketnote
+}
+
+export const getStakeMarketHelperContract = (signer?: Signer | Provider) => {
+  return getContract({
+    abi: stakemarketHelperAbi, 
+    address: getStakeMarketHeperAddress(), 
+    signer
+  }) as Stakemarkethelper
 }
 
 export const getTrustBountiesVoterContract = (signer?: Signer | Provider) => {

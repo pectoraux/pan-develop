@@ -18,7 +18,6 @@ export enum PairState {
 
 export function usePairs(currencies: [Currency | undefined, Currency | undefined][]): [PairState, Pair | null][] {
   const { chainId } = useActiveChainId()
-
   const tokens = useMemo(
     () =>
       currencies.map(([currencyA, currencyB]) => [
@@ -27,7 +26,7 @@ export function usePairs(currencies: [Currency | undefined, Currency | undefined
       ]),
     [chainId, currencies],
   )
-
+    
   const pairAddresses = useMemo(
     () =>
       tokens.map(([tokenA, tokenB]) => {

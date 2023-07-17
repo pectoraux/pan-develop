@@ -33,9 +33,21 @@ const HarvestAction: React.FunctionComponent<any> = ({ pool, currAccount }) => {
       <ActionContent>
         <Flex flex="1" flexDirection="column" alignSelf="flex-center">
           <Box mr="8px" height="32px">
-            <Balance lineHeight="1" color="textSubtle" fontSize="12px" decimals={5} value={getBalanceNumber(pool?.totalPaid, pool?.token?.decimals ?? 18)} />
+            <Balance lineHeight="1" color="textSubtle" fontSize="12px" decimals={18} value={getBalanceNumber(pool?.totalPaid, pool?.token?.decimals ?? 18)} />
             <Text color="primary" fontSize="12px" display="inline" bold as="span" textTransform="uppercase">
               {t("Total Paid")}
+            </Text>
+          </Box>
+          <Box mr="8px" height="32px">
+            <Balance lineHeight="1" color="textSubtle" fontSize="12px" decimals={18} value={getBalanceNumber(pool?.pricePerMinutes, pool?.token?.decimals ?? 18)} />
+            <Text color="primary" fontSize="12px" display="inline" bold as="span" textTransform="uppercase">
+              {t("Price Per Paper Minutes")}
+            </Text>
+          </Box>
+          <Box mr="8px" height="32px">
+            <Balance lineHeight="1" color="textSubtle" fontSize="12px" decimals={18} value={getBalanceNumber(pool?.totalEarned, pool?.token?.decimals ?? 18)} />
+            <Text color="primary" fontSize="12px" display="inline" bold as="span" textTransform="uppercase">
+              {t("Total Earnings")}
             </Text>
           </Box>
           <Box mr="8px" height="32px">
@@ -88,7 +100,7 @@ const HarvestAction: React.FunctionComponent<any> = ({ pool, currAccount }) => {
           </Box>
           <Box mr="8px" height="32px">
             {parseInt(currAccount?.price) ?
-            <Balance lineHeight="1" color="textSubtle" fontSize="12px" decimals={5} value={getBalanceNumber(currAccount?.price, pool?.token?.decimals ?? 18)}/>
+            <Balance lineHeight="1" color="textSubtle" fontSize="12px" decimals={18} value={getBalanceNumber(currAccount?.price, pool?.token?.decimals ?? 18)}/>
             :<Text lineHeight="1" color="textDisabled" fontSize="12px" textTransform="uppercase">N/A</Text>}
             <Text color="primary" fontSize="12px" display="inline" bold as="span" textTransform="uppercase">
               {t("Price")}
@@ -104,7 +116,7 @@ const HarvestAction: React.FunctionComponent<any> = ({ pool, currAccount }) => {
           </Box>
           <Box mr="8px" height="32px">
             {parseInt(currAccount?.won) ?
-            <Balance lineHeight="1" color="textSubtle" fontSize="12px" decimals={5} value={getBalanceNumber(currAccount?.won, pool?.token?.decimals ?? 18)}/>
+            <Balance lineHeight="1" color="textSubtle" fontSize="12px" decimals={18} value={getBalanceNumber(currAccount?.won, pool?.token?.decimals ?? 18)}/>
             :<Text lineHeight="1" color="textDisabled" fontSize="12px" textTransform="uppercase">N/A</Text>}
             <Text color="primary" fontSize="12px" display="inline" bold as="span" textTransform="uppercase">
               {t("Winnings")}

@@ -106,6 +106,32 @@ const SetPriceStage: React.FC<any> = ({
     </GreyedOutContainer>
     <GreyedOutContainer>
       <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
+        {t('Minimum Lock Value')}
+      </Text>
+      <Input
+        type="text"
+        scale="sm"
+        name='minimumLockValue'
+        value={state.minimumLockValue}
+        placeholder={t('input min. lock value')}
+        onChange={handleChange}
+      />
+    </GreyedOutContainer>
+    <GreyedOutContainer>
+      <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
+        {t('Minimum Period')}
+      </Text>
+      <Input
+        type="text"
+        scale="sm"
+        name='minPeriod'
+        value={state.minPeriod}
+        placeholder={t('input min. period')}
+        onChange={handleChange}
+      />
+    </GreyedOutContainer>
+    <GreyedOutContainer>
+      <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
         {t('Minimum Bounty Required')}
       </Text>
       <Input

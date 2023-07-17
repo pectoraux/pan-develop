@@ -39,12 +39,17 @@ const CreateAuditorModal: React.FC<any> = ({ onDismiss }) => {
       // eslint-disable-next-line consistent-return
       const receipt = await fetchWithCatchTxError(async () => {
       try {
-          await callWithGasPrice(acceleratorContract, 'createGauge', [ve])
-          return callWithGasPrice(acceleratorContract, 'updateContent', [
-            ["", "", "", original, thumbnail], "", ""
-          ])
+          const args = [ve]
+          const args2 = [
+            ["", "", "", original, thumbnail], 
+            "", 
+            ""
+          ]
+          console.log("createGauge=====================>", args, args2)
+          return callWithGasPrice(acceleratorContract, 'createGauge', args)
+          .then(() => callWithGasPrice(acceleratorContract, 'updateContent', args2))
+          .catch((err) => console.log("rerr=====================>", err))
         } catch (err) {
-          console.log("rerr=====================>", err, [ve])
           setPendingFb(false)
           // toastError(
           //   t('Issue creating accelerator pitch'),

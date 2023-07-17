@@ -30,14 +30,14 @@ const SetPriceStage: React.FC<any> = ({
     <>
     <GreyedOutContainer>
       <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
-        {t('Token ID')}
+        {t('Owner Address')}
       </Text>
       <Input
         type="text"
         scale="sm"
-        name='tokenId'
-        value={state.tokenId}
-        placeholder={t('input your token id')}
+        name='owner'
+        value={state.owner}
+        placeholder={t('input owner address')}
         onChange={handleChange}
       />
     </GreyedOutContainer>
@@ -47,7 +47,7 @@ const SetPriceStage: React.FC<any> = ({
       </Flex>
       <Box>
         <Text small color="textSubtle">
-          {t('The will update the owner address of the pool. Please read the documentation for more information.')}
+          {t('The will update the owner address of the will. Please read the documentation for more information.')}
         </Text>
       </Box>
     </Grid>

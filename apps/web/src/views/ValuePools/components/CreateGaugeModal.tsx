@@ -238,7 +238,7 @@ const BuyModal: React.FC<any> = ({ variant="user", location="valuepool", pool, c
   const stakingTokenBalance = balance ? getDecimalAmount(new BigNumber(balance.toExact()), currency?.decimals) : BIG_ZERO
   const stakingTokenBalance2 = tokenBalance?.maxWithdrawable ? getDecimalAmount(tokenBalance.maxWithdrawable, currency?.decimals) : BIG_ZERO
   const totalLiquidity = parseFloat(pool.totalLiquidity) ? getBalanceNumber(pool?.totalLiquidity, currency?.decimals) : BIG_ZERO
-  console.log("totalLiquidity=============>", totalLiquidity)
+  console.log("totalLiquidity=============>", totalLiquidity, pool)
   const treasuryBalance = (parseFloat(pool?.treasuryShare ?? '0') / 100) * parseFloat(totalLiquidity.toString())
   const dispatch = useAppDispatch()
   const fromValuepool = useRouter().query.valuepool
@@ -316,6 +316,7 @@ const BuyModal: React.FC<any> = ({ variant="user", location="valuepool", pool, c
     add: 0,
     value: '',
     onlyDataKeepers: 0,
+    minimumLockValue: '',
     onlyTrustWorthyMerchants: 0,
     treasuryShare: pool?.treasuryShare,
     maxWithdrawable: pool?.maxWithdrawable,
@@ -749,8 +750,28 @@ const BuyModal: React.FC<any> = ({ variant="user", location="valuepool", pool, c
     // eslint-disable-next-line consistent-return
     onConfirm: () => {
       if (stage === LockStage.CONFIRM_DELETE_VP) {
-        return callWithGasPrice(valuepoolHelperContract, 'deleteVava', [adminARP.arpAddress])
+        console.log("CONFIRM_DELETE_VP===============>", [pool?.valuepoolAddress])
+        return callWithGasPrice(valuepoolHelperContract, 'deleteVava', [pool?.valuepoolAddress])
         .catch((err) => console.log("CONFIRM_DELETE_VP===============>", err))
+      }
+      if (stage === LockStage.CONFIRM_NOTIFY_LOAN) {
+        const amountReceivable = getDecimalAmount(state.amountReceivable ?? 0, currency?.decimals)
+        const args = [currency?.address,state.cardAddress,amountReceivable.toString()]
+        console.log("CONFIRM_NOTIFY_LOAN===============>", args)
+        return callWithGasPrice(valuepoolContract, 'notifyLoan', args)
+        .catch((err) => console.log("CONFIRM_NOTIFY_LOAN===============>", err))
+      }
+      if (stage === LockStage.CONFIRM_ADMIN_WITHDRAW) {
+        const amountPayable = getDecimalAmount(state.amountPayable ?? 0, currency?.decimals)
+        const args = [pool?.valuepoolAddress, currency?.address, amountPayable?.toString()]
+        console.log("CONFIRM_ADMIN_WITHDRAW===============>", args)
+        return callWithGasPrice(valuepoolHelperContract, 'withdrawTreasury', args)
+        .catch((err) => console.log("CONFIRM_ADMIN_WITHDRAW===============>", err))
+      }
+      if (stage === LockStage.CONFIRM_REMOVE_SPONSORS) {
+        console.log("CONFIRM_REMOVE_SPONSORS===============>", [state.cardAddress])
+        return callWithGasPrice(valuepoolContract, 'removeSponsorAt', [state.cardAddress])
+        .catch((err) => console.log("CONFIRM_REMOVE_SPONSORS===============>", err))
       }
       if (stage === LockStage.CONFIRM_DELETE) {
         return callWithGasPrice(valuepoolContract, 'deleteProtocol', [pool.owner])
@@ -965,11 +986,12 @@ const BuyModal: React.FC<any> = ({ variant="user", location="valuepool", pool, c
           parseInt(state.minDifference)*100, 
           state.userTokenId, 
           state.minBountyRequired, 
-          state.voteOption
+          state.minimumLockValue,
+          state.votingPower
         ]
-        console.log("CONFIRM_CONFIRM_UPDATE_VOTING_PARAMETERS===============>",args)
+        console.log("CONFIRM_UPDATE_VOTING_PARAMETERS===============>",args)
         return callWithGasPrice(valuepoolVoterContract, 'addVa', args)
-        .catch((err) => console.log("CONFIRM_CONFIRM_UPDATE_VOTING_PARAMETERS===============>", err))
+        .catch((err) => console.log("CONFIRM_UPDATE_VOTING_PARAMETERS===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_EXCLUDED_CONTENT) {
         const args = [state.vava, state.contentType, !!state.add]
@@ -1087,9 +1109,9 @@ const BuyModal: React.FC<any> = ({ variant="user", location="valuepool", pool, c
           <Button variant="success" mb="8px" onClick={()=> setStage(LockStage.MERGE) }>
             {t('MERGE IDs')}
           </Button>:null}
-          <Button variant="secondary" mb="8px" onClick={()=> setStage(LockStage.CREDITOR) }>
+          {/* <Button variant="secondary" mb="8px" onClick={()=> setStage(LockStage.CREDITOR) }>
             {t('BECOME A CREDITOR')}
-          </Button>
+          </Button> */}
           {userData?.nfts?.length ?
           <Button variant="danger" mb="8px" onClick={()=> setStage(LockStage.WITHDRAW)}>
             {t('WITHDRAW')}
@@ -1133,9 +1155,9 @@ const BuyModal: React.FC<any> = ({ variant="user", location="valuepool", pool, c
           <Button variant="light" mb="8px" onClick={()=> setStage(LockStage.UPDATE_MEDIA) }>
             {t('UPDATE MEDIA')}
           </Button>
-          <Button variant="light" mb="8px" onClick={()=> setStage(LockStage.UPDATE_MINIMUM_LOCK) }>
+          {/* <Button variant="light" mb="8px" onClick={()=> setStage(LockStage.UPDATE_MINIMUM_LOCK) }>
             {t('UPDATE MINIMUM LOCK')}
-          </Button>
+          </Button> */}
           <Button variant="secondary" mb="8px" onClick={()=> setStage(LockStage.UPDATE_VOTING_PARAMETERS) }>
             {t('UPDATE VOTING PARAMETERS')}
           </Button>
@@ -1145,9 +1167,9 @@ const BuyModal: React.FC<any> = ({ variant="user", location="valuepool", pool, c
           <Button variant="tertiary" mb="8px" onClick={()=> setStage(LockStage.CONFIRM_SWITCH_POOL) }>
             {t('SWITCH POOL')}
           </Button>
-          <Button variant="tertiary" mb="8px" onClick={()=> setStage(LockStage.UPDATE_COLLECTION_ID) }>
+          {/* <Button variant="tertiary" mb="8px" onClick={()=> setStage(LockStage.UPDATE_COLLECTION_ID) }>
             {t('UPDATE COLLECTION ID IN VE')}
-          </Button>
+          </Button> */}
           <Button mb="8px" onClick={()=> setStage(LockStage.UPDATE_OWNER) }>
             {t('UPDATE OWNER')}
           </Button>

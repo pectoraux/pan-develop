@@ -5,7 +5,7 @@ import { Text } from "../../Text";
 
 const Icon: React.FC<React.PropsWithChildren<SvgProps>> = (props) => {
   return (
-    <Text bold fontSize={20} color="primary">PAYSWAP</Text>
+    <Text bold fontSize={20} color="secondary">PAYSWAP</Text>
   );
 };
 

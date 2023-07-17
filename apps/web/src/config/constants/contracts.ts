@@ -24,11 +24,11 @@ export default {
   },
   profile: {
     56: '',
-    97: '0xA51A66C22bB8860f8B0b589246e6741101A834e9',
+    97: '0x6a1675e15290e9e53f3dBCA4E7Eb8f123aCc0c25',
   },
   profileHelper: {
     56: '',
-    97: '0x4E4AdE1208d2Ed73Ff4Edb51183afC5AaAF720b4',
+    97: '0x5333fB8b431A52Ae6Cc136305D4177ED75ecFa3A',
   },
   ssi: {
     56: '',
@@ -245,6 +245,10 @@ export default {
     56: '',
     97: '0x131637F4d7B58d7061Ec00ceFAA4DBF66B968921'
   },
+  lotteryRandomNumberGenerator: {
+    56: '',
+    97: '0x5Caf316e39AA85C9411884e8955A091c891b6243'
+  },
   gameHelper: {
     56: '',
     97: '0xdf0B6D6e257F62616b4358D403DD968EB19df981'
@@ -430,7 +434,7 @@ export default {
     56: '',
   },
   businessMinter: {
-    97:'0xDf495aDd1a5837E5ff5bb799bc9AB2491D262AC4',
+    97:'0x2D5418773bBBc39e438f6d41d5e06dc72425c6D3',
     56: '',
   },
   businessBribeFactory: {
@@ -454,11 +458,11 @@ export default {
     56: '',
   },
   acceleratorVoter: {
-    97:'0x8655cB34Ab288751617716751a1Fa62De9AF288D',
+    97:'0x0e0BAbAF8b0d397D26D537bA907c684fa3231293',
     56: '',
   },
   contributorsVoter: {
-    97:'0x4db7660F8eFB6DE108fe1675A2c03A03D834C39c',
+    97:'0xAD008435f952eBA30B4c6b40dDDA45a68A696407',
     56: '',
   },
   affiliatesVoter: {

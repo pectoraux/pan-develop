@@ -10,7 +10,7 @@ import BigNumber from 'bignumber.js'
 import useTheme from 'hooks/useTheme'
 import { requiresApproval } from 'utils/requiresApproval'
 import { getDecimalAmount, getBalanceNumber } from '@pancakeswap/utils/formatBalance'
-import { useERC20, useAuditorContract, useAuditorNote, useAuditorHelper } from 'hooks/useContract'
+import { useERC20, useAuditorContract, useAuditorNote, useAuditorHelper, useAuditorHelper2 } from 'hooks/useContract'
 import { convertTimeToSeconds } from 'utils/timeHelper'
 import { useWeb3React } from '@pancakeswap/wagmi'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
@@ -81,7 +81,6 @@ const modalTitles = (t: TranslateFunction) => ({
   [LockStage.ADMIN_AUTOCHARGE]: t('Autocharge'),
   [LockStage.UPDATE_DESCRIPTION]: t('Update Description'),
   [LockStage.UPDATE_URI_GENERATOR]: t('Update URI Generator'),
-  [LockStage.COSIGNS]: t('Cosigns'),
   [LockStage.MINT_EXTRA]: t('Mint Extra'),
   [LockStage.DELETE]: t('Delete'),
   [LockStage.CLAIM_NOTE]: t('Claim Note'),
@@ -184,6 +183,7 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
   const auditorContract = useAuditorContract(pool?.auditorAddress || router.query.auditor || '')
   const auditorNoteContract = useAuditorNote()
   const auditorHelperContract = useAuditorHelper()
+  const auditorHelper2Contract = useAuditorHelper2()
   console.log("mcurrencyy===============>", currAccount, currency, pool, auditorContract)
   // const [onPresentPreviousTx] = useModal(<ActivityHistory />,)
 
@@ -204,7 +204,8 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
     maxNotesPerProtocol: pool?.maxNotesPerProtocol,
     amountPayable: '',
     pricePerMinute: '',
-    auditor: currAccount?.id ?? '',
+    contractAddress: '',
+    auditor: pool?.auditorAddress ?? '',
     legend: currAccount?.ratingLegend,
     amountReceivable: getBalanceNumber(currAccount?.amountReceivable ?? 0, currency?.decimals),
     periodReceivable: currAccount?.periodReceivable,
@@ -578,23 +579,23 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
       if (stage === LockStage.CONFIRM_UPDATE_SPONSOR_MEDIA) {
         const args = [state.protocolId,state.tag]
         console.log("CONFIRM_UPDATE_SPONSOR_MEDIA===============>", args)
-        return callWithGasPrice(auditorHelperContract, 'updateSponsorMedia', args)
+        return callWithGasPrice(auditorHelper2Contract, 'updateSponsorMedia', args)
         .catch((err) => console.log("CONFIRM_UPDATE_SPONSOR_MEDIA===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_TAG_REGISTRATION) {
         const args = [state.tag,!!state.add]
         console.log("CONFIRM_UPDATE_TAG_REGISTRATION===============>", args)
-        return callWithGasPrice(auditorHelperContract, 'updateTagRegistration', args)
+        return callWithGasPrice(auditorHelper2Contract, 'updateTagRegistration', args)
         .catch((err) => console.log("CONFIRM_UPDATE_TAG_REGISTRATION===============>", err))
       }
       if (stage === LockStage.CONFIRM_TRANSFER_TO_NOTE_RECEIVABLE) {
-        const args = [pool?.id,state.toAddress,state.protocolId,state.numPeriods]
+        const args = [state.auditor,state.toAddress,state.protocolId,state.numPeriods]
         console.log("CONFIRM_TRANSFER_TO_NOTE_RECEIVABLE===============>", args)
         return callWithGasPrice(auditorNoteContract, 'transferDueToNoteReceivable', args)
         .catch((err) => console.log("CONFIRM_TRANSFER_TO_NOTE_RECEIVABLE===============>", err))
       }
       if (stage === LockStage.CONFIRM_TRANSFER_TO_NOTE_PAYABLE) {
-        const args = [pool?.id,state.toAddress,state.protocolId,state.amountPayable]
+        const args = [state.auditor,state.toAddress,state.protocolId,state.amountPayable]
         console.log("CONFIRM_TRANSFER_TO_NOTE_PAYABLE===============>", args)
         return callWithGasPrice(auditorNoteContract, 'transferDueToNotePayable', args)
         .catch((err) => console.log("CONFIRM_TRANSFER_TO_NOTE_PAYABLE===============>", err))
@@ -625,10 +626,7 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
         .catch((err) => console.log("CONFIRM_UPDATE_PROTOCOL===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_PARAMETERS) {
-        const args = [
-          !!state.bountyRequired,
-          state.name
-        ]
+        const args = [!!state.bountyRequired]
         console.log("CONFIRM_UPDATE_PARAMETERS===============>", args)
         return callWithGasPrice(auditorContract, 'updateParameters', args)
         .catch((err) => console.log("CONFIRM_UPDATE_PARAMETERS===============>", err))
@@ -636,13 +634,14 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
       if (stage === LockStage.CONFIRM_SPONSOR_TAG) {
         const amountReceivable = getDecimalAmount(state.amountReceivable ?? 0, currency?.decimals)
         const args = [
-          pool?.id, 
+          state.contractAddress,
+          state.auditor, 
           amountReceivable.toString(), 
           state.tag,
           state.message
         ]
         console.log("CONFIRM_SPONSOR_TAG===============>",args)
-        return callWithGasPrice(auditorHelperContract, 'sponsorTag', args)
+        return callWithGasPrice(auditorHelper2Contract, 'sponsorTag', args)
         .catch((err) => console.log("CONFIRM_SPONSOR_TAG===============>", err))
       }
       if (stage === LockStage.CONFIRM_MINT_EXTRA) {
@@ -654,18 +653,18 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
       if (stage === LockStage.CONFIRM_UPDATE_DATA_KEEPER) {
         const args = [state.auditor, !!state.datakeeper]
         console.log("CONFIRM_UPDATE_DATA_KEEPER===============>",args)
-        return callWithGasPrice(auditorHelperContract, 'updateDatakeeper', args)
+        return callWithGasPrice(auditorNoteContract, 'updateDatakeeper', args)
         .catch((err) => console.log("CONFIRM_UPDATE_DATA_KEEPER===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_EXCLUDED_CONTENT) {
         console.log("CONFIRM_UPDATE_EXCLUDED_CONTENT===============>",[state.tag, state.contentType, !!state.add])
-        return callWithGasPrice(auditorHelperContract, 'updateExcludedContent', [state.tag, state.contentType, !!state.add])
+        return callWithGasPrice(auditorHelper2Contract, 'updateExcludedContent', [state.tag, state.contentType, !!state.add])
         .catch((err) => console.log("CONFIRM_UPDATE_EXCLUDED_CONTENT===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_PRICE_PER_MINUTE) {
         const pricePerMinute = getDecimalAmount(state.pricePerMinute ?? 0, currency?.decimals)
         console.log("CONFIRM_UPDATE_PRICE_PER_MINUTE===============>",[pricePerMinute?.toString()])
-        return callWithGasPrice(auditorHelperContract, 'pricePerMinute', [pricePerMinute?.toString()])
+        return callWithGasPrice(auditorHelper2Contract, 'updatePricePerAttachMinutes', [pricePerMinute?.toString()])
         .catch((err) => console.log("CONFIRM_UPDATE_PRICE_PER_MINUTE===============>", err))
       }
       if (stage === LockStage.CONFIRM_BURN) {
@@ -674,18 +673,18 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
         .catch((err) => console.log("CONFIRM_BURN===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_CATEGORY) {
-        console.log("CONFIRM_UPDATE_CATEGORY===============>",[pool?.id, state.category])
-        return callWithGasPrice(auditorHelperContract, 'updateCategory', [pool?.id, state.category])
+        console.log("CONFIRM_UPDATE_CATEGORY===============>",[state.auditor, state.category])
+        return callWithGasPrice(auditorHelperContract, 'updateCategory', [state.auditor, state.category])
         .catch((err) => console.log("CONFIRM_UPDATE_CATEGORY===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_MINT_INFO) {
         console.log("CONFIRM_UPDATE_MINT_INFO===============>",[
-          pool?.id, 
+          state.auditor, 
           state.extraMint, 
           state.tokenId
         ])
         return callWithGasPrice(auditorHelperContract, 'updateMintInfo', [
-          pool?.id, 
+          state.auditor, 
           state.extraMint, 
           state.tokenId
         ])
@@ -698,7 +697,7 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
       }
       if (stage === LockStage.CONFIRM_UPDATE_DESCRIPTION) {
         console.log("CONFIRM_UPDATE_DESCRIPTION===============>", [
-          pool?.id, 
+          state.auditor, 
           state.auditorDescription, 
           state.avatar, 
           state.applicationLink, 
@@ -710,7 +709,7 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
           nftFilters?.product?.reduce((accum, attr) => ([...accum, attr]),[],) || [], 
         ])
         return callWithGasPrice(auditorNoteContract, 'emitUpdateAuditorDescription', [
-          pool?.id, 
+          state.auditor, 
           state.auditorDescription, 
           state.avatar, 
           state.applicationLink, 
@@ -741,8 +740,8 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
         .catch((err) => console.log("CONFIRM_DELETE_PROTOCOL===============>", err))
       }
       if (stage === LockStage.CONFIRM_DELETE) {
-        console.log("CONFIRM_DELETE_PROTOCOL===============>",[pool?.id])
-        return callWithGasPrice(auditorNoteContract, 'deleteAuditor', [pool?.id])
+        console.log("CONFIRM_DELETE_PROTOCOL===============>",[state.auditor])
+        return callWithGasPrice(auditorNoteContract, 'deleteAuditor', [state.auditor])
         .catch((err) => console.log("CONFIRM_DELETE_PROTOCOL===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_BOUNTY_ID) {
@@ -768,17 +767,17 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
       if (stage === LockStage.CONFIRM_UPDATE_RATING_LEGEND) {
         const args = [state.auditor, state.legend?.split(',')]
         console.log("CONFIRM_UPDATE_RATING_LEGEND===============>",args)
-        return callWithGasPrice(auditorNoteContract, 'claimPendingRevenueFromNote', args)
+        return callWithGasPrice(auditorHelper2Contract, 'updateRatingLegend', args)
         .catch((err) => console.log("CONFIRM_UPDATE_RATING_LEGEND===============>", err))
       }
       if (stage === LockStage.CONFIRM_CLAIM_REVENUE_FROM_SPONSORS) {
         console.log("CONFIRM_CLAIM_REVENUE_FROM_SPONSORS===============>",[])
-        return callWithGasPrice(auditorHelperContract, 'claimPendingRevenue', [])
+        return callWithGasPrice(auditorHelper2Contract, 'claimPendingRevenue', [])
         .catch((err) => console.log("CONFIRM_CLAIM_REVENUE_FROM_SPONSORS===============>", err))
       }
       if (stage === LockStage.CONFIRM_VOTE) {
         const args = [
-          pool.id,
+          state.auditor,
           state.profileId,
           !!state.like
         ]
@@ -847,9 +846,9 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
           <Button mb="8px" variant="secondary" onClick={()=> setStage(LockStage.UPDATE_AUTOCHARGE) }>
             {t('UPDATE AUTOCHARGE')}
           </Button>
-          <Button mb="8px" variant="subtle" onClick={()=> setStage(LockStage.TRANSFER_TO_NOTE_PAYABLE) }>
+          {/* <Button mb="8px" variant="subtle" onClick={()=> setStage(LockStage.TRANSFER_TO_NOTE_PAYABLE) }>
             {t('TRANSFER TO NOTE PAYABLE')}
-          </Button>
+          </Button> */}
           <Button mb="8px" onClick={()=> setStage(LockStage.CLAIM_NOTE) }>
             {t('CLAIM NOTE')}
           </Button>

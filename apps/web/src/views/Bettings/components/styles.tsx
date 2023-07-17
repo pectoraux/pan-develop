@@ -10,11 +10,11 @@ export const StyledModal = styled(Modal)<{ stage: LockStage }>`
 
 export const stagesWithApproveButton = [
   LockStage.CONFIRM_BUY_TICKETS,
+  LockStage.CONFIRM_INJECT_FUNDS,
+  LockStage.CONFIRM_SPONSOR_TAG,
 ]
 
 export const stagesWithConfirmButton = [
-  LockStage.CONFIRM_INJECT_FUNDS,
-  LockStage.CONFIRM_SPONSOR_TAG,
   LockStage.CONFIRM_CLAIM_TICKETS,
   LockStage.CONFIRM_DELETE,
   LockStage.CONFIRM_BURN,

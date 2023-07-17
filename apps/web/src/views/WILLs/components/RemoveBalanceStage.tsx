@@ -37,8 +37,8 @@ const SetPriceStage: React.FC<any> = ({
         <Input
           type="text"
           scale="sm"
-          name='payable'
-          value={state.payable}
+          name='amountPayable'
+          value={state.amountPayable}
           placeholder={t('input amount payable')}
           onChange={handleChange}
         />

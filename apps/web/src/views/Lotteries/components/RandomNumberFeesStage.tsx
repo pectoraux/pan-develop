@@ -45,19 +45,6 @@ const SetPriceStage: React.FC<any> = ({
   return (
     <>
     <GreyedOutContainer>
-      <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
-        {t('Lottery ID')}
-      </Text>
-      <Input
-        type="text"
-        scale="sm"
-        name='lotteryId'
-        value={state.lotteryId}
-        placeholder={t('input lottery id')}
-        onChange={handleChange}
-      />
-    </GreyedOutContainer>
-    <GreyedOutContainer>
       <BribeField
         add="inject"
         stakingAddress={currency?.address}
@@ -69,17 +56,6 @@ const SetPriceStage: React.FC<any> = ({
         setLockedAmount={handleRawValueChange('amountReceivable')}
         stakingTokenBalance={stakingTokenBalance}
       />
-    </GreyedOutContainer>
-    <GreyedOutContainer>
-        <StyledItemRow>
-          <Text fontSize="12px" color="secondary" textTransform="uppercase" paddingTop="3px" paddingRight="50px" bold>
-            {t('Reinject')}
-          </Text>
-          <ButtonMenu scale="xs" variant='subtle' activeIndex={state.reinject} onItemClick={handleRawValueChange('reinject')}>
-            <ButtonMenuItem >{t("No")}</ButtonMenuItem>
-            <ButtonMenuItem >{t("Yes")}</ButtonMenuItem>
-          </ButtonMenu> 
-        </StyledItemRow>
     </GreyedOutContainer>
     <Grid gridTemplateColumns="32px 1fr" p="16px" maxWidth="360px">
       <Flex alignSelf="flex-start">

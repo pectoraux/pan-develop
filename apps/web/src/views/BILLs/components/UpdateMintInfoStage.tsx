@@ -50,8 +50,8 @@ const SetPriceStage: React.FC<any> = ({
         <Input
           type="text"
           scale="sm"
-          name='mintExtra'
-          value={state.mintExtra}
+          name='extraMint'
+          value={state.extraMint}
           placeholder={t('input mint extra')}
           onChange={handleChange}
         />

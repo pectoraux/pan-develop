@@ -15,6 +15,7 @@ import {
   useERC20, 
   useStakeMarketContract, 
   useStakeMarketNoteContract,
+  useStakeMarketHelperContract,
 } from 'hooks/useContract'
 import { useAppDispatch } from 'state'
 import { fetchStakesAsync } from 'state/stakemarket'
@@ -57,7 +58,6 @@ const modalTitles = (t: TranslateFunction) => ({
   [LockStage.MINT_NOTE]: t('Mint Transfer Note'),
   [LockStage.SPLIT_SHARES]: t('Split Shares'),
   [LockStage.CLAIM_NOTE]: t('Claim Revenue from Note'),
-  [LockStage.CLAIM_NOTE]: t('Claim Note'),
   [LockStage.UPLOAD]: t('Upload Documents'),
   [LockStage.START_LITIGATIONS]: t('Litigations'),
   [LockStage.COSIGNS]: t('COSIGNS'),
@@ -69,7 +69,6 @@ const modalTitles = (t: TranslateFunction) => ({
   [LockStage.DELETE_ARP]: t('Delete ARP'),
   [LockStage.UPDATE_STAKE]: t('Update Stake'),
   [LockStage.ADMIN_WITHDRAW]: t('Withdraw'),
-  [LockStage.ACCEPT]: t('Accept Application'),
   [LockStage.UPDATE_OWNER]: t('Update Owner'),
   [LockStage.UPDATE_TAX_CONTRACT]: t('Update Tax Contract'),
   [LockStage.UPDATE_BEFORE_LITIGATIONS]: t('Update Before Litigations'),
@@ -170,6 +169,7 @@ const BuyModal: React.FC<any> = ({ variant="user", pool, sousId, currency, appli
   const adminARP = pool 
   const { signer: stakeMarketContract} = useStakeMarketContract()
   const { signer: stakeMarketNoteContract} = useStakeMarketNoteContract()
+  const { signer: stakeMarketHelperContract} = useStakeMarketHelperContract()
   const stakingTokenContract = useERC20(pool?.tokenAddress || '')
   // const remainingDuration = Math.max(
   //   differenceInSeconds(new Date(1668860000000), new Date(), {
@@ -207,6 +207,7 @@ const BuyModal: React.FC<any> = ({ variant="user", pool, sousId, currency, appli
     removePartner: 0,
     taxAddress: '',
     tag: '',
+    start: '',
     numPeriods: '',
     paidPayable: '',
     paidReceivable: '',
@@ -565,21 +566,21 @@ const BuyModal: React.FC<any> = ({ variant="user", pool, sousId, currency, appli
         .catch((err) => console.log("CONFIRM_SWITCH_STAKE===============>", err))
       }
       if (stage === LockStage.CONFIRM_MINT_IOU) {
-        const args = [state.stakeId, state.defenderStakeId, state.tag]
+        const args = [state.stakeId, state.defenderStakeId, state.start, state.tag]
         console.log("CONFIRM_MINT_IOU===============>",args)
         return callWithGasPrice(stakeMarketNoteContract, 'createIOU', args)
         .catch((err) => console.log("CONFIRM_MINT_IOU===============>", err))
       }
       if (stage === LockStage.CONFIRM_MINT_NOTE) {
-        const args = [1,0]
+        const args = [state.stakeId,state.numPeriods]
         console.log("CONFIRM_MINT_NOTE===============>",args)
-        return callWithGasPrice(stakeMarketNoteContract, 'transferDueToNote', args)
+        return callWithGasPrice(stakeMarketContract, 'mintNote', args)
         .catch((err) => console.log("CONFIRM_MINT_NOTE===============>", err))
       }
       if (stage === LockStage.CONFIRM_CLAIM_NOTE) {
         const args = [state.tokenId]
         console.log("CONFIRM_CLAIM_NOTE===============>",args)
-        return callWithGasPrice(stakeMarketNoteContract, 'claimRevenueFromNote', args)
+        return callWithGasPrice(stakeMarketHelperContract, 'claimRevenueFromNote', args)
         .catch((err) => console.log("CONFIRM_CLAIM_NOTE===============>", err))
       }
       if (stage === LockStage.CONFIRM_CANCEL_STAKE) {
@@ -638,9 +639,9 @@ const BuyModal: React.FC<any> = ({ variant="user", pool, sousId, currency, appli
           stakeRequired.toString(),
           Number(state.gasPercent)*100,
           state.terms,
-          nftFilters?.country?.reduce((accum, attr) => ([...accum, attr]),[],),
-          nftFilters?.city?.reduce((accum, attr) => ([...accum, attr]),[],),
-          nftFilters?.product?.reduce((accum, attr) => ([...accum, attr]),[],),
+          nftFilters?.country?.toString(),
+          nftFilters?.city?.toString(),
+          nftFilters?.product?.toString(),
         ]
         console.log("CONFIRM_UPDATE===============>", args)
         return callWithGasPrice(stakeMarketContract, 'updateRequirements', args)

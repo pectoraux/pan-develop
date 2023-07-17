@@ -57,14 +57,40 @@ const SetPriceStage: React.FC<any> = ({
     <>
     <GreyedOutContainer>
         <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
-          {t('Partner Bounty ID')}
+          {t('Betting ID')}
         </Text>
         <Input
           type="text"
           scale="sm"
-          name='partnerBountyId'
-          value={state.partnerBountyId}
-          placeholder={t('input your bounty id as a partner')}
+          name='bettingId'
+          value={state.bettingId}
+          placeholder={t('input betting id')}
+          onChange={handleChange}
+        />
+    </GreyedOutContainer>
+    <GreyedOutContainer>
+        <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
+          {t('Ticket IDs')}
+        </Text>
+        <Input
+          type="text"
+          scale="sm"
+          name='ticketNumbers'
+          value={state.ticketNumbers}
+          placeholder={t('input ticket numbers')}
+          onChange={handleChange}
+        />
+    </GreyedOutContainer>
+    <GreyedOutContainer>
+        <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
+          {t('Brackets')}
+        </Text>
+        <Input
+          type="text"
+          scale="sm"
+          name='brackets'
+          value={state.brackets}
+          placeholder={t('input brackets')}
           onChange={handleChange}
         />
     </GreyedOutContainer>
@@ -74,7 +100,7 @@ const SetPriceStage: React.FC<any> = ({
       </Flex>
       <Box>
         <Text small color="textSubtle">
-          {t('The will transfer your revenue from the account to your wallet. Please read the documentation for more details.')}
+          {t('The will transfer the ticket winnings to your wallet. Please read the documentation for more details.')}
         </Text>
       </Box>
     </Grid>

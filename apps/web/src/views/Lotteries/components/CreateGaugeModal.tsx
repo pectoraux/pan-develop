@@ -8,7 +8,7 @@ import BigNumber from 'bignumber.js'
 import useTheme from 'hooks/useTheme'
 import { requiresApproval } from 'utils/requiresApproval'
 import { getDecimalAmount, getBalanceNumber } from '@pancakeswap/utils/formatBalance'
-import { useERC20, useLotteryContract, useLotteryHelperContract, useRandomNumberGenerator } from 'hooks/useContract'
+import { useERC20, useLotteryContract, useLotteryHelperContract, useLotteryRandomNumberGenerator } from 'hooks/useContract'
 import { combineDateAndTime } from 'views/SSI/CreateProposal/helpers'
 import { convertTimeToSeconds } from 'utils/timeHelper'
 import { useWeb3React } from '@pancakeswap/wagmi'
@@ -129,7 +129,7 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
   const stakingTokenContract = useERC20(currency?.address || currAccount?.token?.address || '')
   const lotteryContract = useLotteryContract()
   const lotteryHelperContract = useLotteryHelperContract()
-  const randomNumberGeneratorContract = useRandomNumberGenerator()
+  const randomNumberGeneratorContract = useLotteryRandomNumberGenerator()
   console.log("mcurrencyy===============>", currAccount, currency, pool, lotteryContract)
   // const [onPresentPreviousTx] = useModal(<ActivityHistory />,)
 
@@ -331,22 +331,24 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
         const endAmount = getDecimalAmount(state.endAmount ?? 0, currency?.decimals)
         const amountReceivable = getDecimalAmount(state.amountReceivable ?? 0, currency?.decimals)
         const timeReceivable = combineDateAndTime(state.startReceivable, state.startTime)?.toString()
-        const startReceivable = Math.max(differenceInSeconds(new Date(timeReceivable ?? 0), new Date(), {
+        const startReceivable = Math.max(differenceInSeconds(new Date(timeReceivable ? parseInt(timeReceivable) * 1000 : 0), new Date(), {
           roundingMethod: 'ceil',
         }),0)
+        console.log("startReceivable===================>",startReceivable)
         const time2Receivable = combineDateAndTime(state.endReceivable, state.endTime)?.toString()
-        const endReceivable = Math.max(differenceInSeconds(new Date(time2Receivable ?? 0), new Date(), {
+        const endReceivable = Math.max(differenceInSeconds(new Date(timeReceivable ? parseInt(timeReceivable) * 1000 : 0), new Date(), {
           roundingMethod: 'ceil',
         }),0)
-        const lockDuration = Math.max(differenceInSeconds(new Date(state.lockDuration ?? 0), new Date(), {
-          roundingMethod: 'ceil',
-        }),0)
+        // const lockDuration = Math.max(differenceInSeconds(new Date(state.lockDuration ?? 0), new Date(), {
+        //   roundingMethod: 'ceil',
+        // }),0)
         const args = [
+          account,
           state.valuepool,
           startReceivable.toString(),
           endReceivable.toString(),
           endAmount.toString(),
-          lockDuration.toString(),
+          state.lockDuration,
           !!state.useNFTicket,
           [
             state.treasuryFee, 
@@ -360,12 +362,12 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
         return callWithGasPrice(lotteryHelperContract, 'startLottery', args)
         .catch((err) => console.log("CONFIRM_START_LOTTERY===============>", err))
       }
-      if (stage === LockStage.CONTRIBUTE_RANDOM_NUMBER_FEES) {
+      if (stage === LockStage.CONFIRM_CONTRIBUTE_RANDOM_NUMBER_FEES) {
         const amountReceivable = getDecimalAmount(state.amountReceivable ?? 0, currency?.decimals)
         const args = [amountReceivable?.toString()]
-        console.log("CONTRIBUTE_RANDOM_NUMBER_FEES===============>", args)
+        console.log("CONFIRM_CONTRIBUTE_RANDOM_NUMBER_FEES===============>", args)
         return callWithGasPrice(randomNumberGeneratorContract, 'addFee', args)
-        .catch((err) => console.log("CONTRIBUTE_RANDOM_NUMBER_FEES===============>", err))
+        .catch((err) => console.log("CONFIRM_CONTRIBUTE_RANDOM_NUMBER_FEES===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_BURN_TOKEN_FOR_CREDIT) {
         const args = [
@@ -396,7 +398,7 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
         .catch((err) => console.log("CONFIRM_INJECT_FUNDS===============>", err))
       }
       if (stage === LockStage.CONFIRM_WITHDRAW) {
-        const args = !state.referrer ? [currency.address,state.lotteryId,state.identityTokenId] : [currency.address,state.lotteryId]
+        const args = !state.referrer ? [currency.address,state.lotteryId,state.identityTokenId] : [state.lotteryId,currency.address]
         const method = !state.referrer ? 'withdrawPendingReward' : 'withrawReferrerFee'
         console.log("CONFIRM_WITHDRAW===============>",args)
         return callWithGasPrice(lotteryContract, method, args)
@@ -583,6 +585,7 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
         state={state} 
         account={pool.id}
         currency={currency}
+        handleChange={handleChange} 
         continueToNextStage={continueToNextStage} 
         handleRawValueChange={handleRawValueChange}
       />}

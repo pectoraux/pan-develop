@@ -39,7 +39,7 @@ const SetPriceStage: React.FC<any> = ({
   const { t } = useTranslation()
   const inputRef = useRef<HTMLInputElement>()
   const [lockedAmount, setLockedAmount] = useState('')
-  const balance = useCurrencyBalance(account ?? undefined, currency ?? undefined)
+  const balance = BIG_ZERO //useCurrencyBalance(account ?? undefined, currency ?? undefined)
   const stakingTokenBalance = balance ? getDecimalAmount(new BigNumber(balance.toFixed()), currency?.decimals) : BIG_ZERO
   const usdValueStaked = useBUSDCakeAmount(_toNumber(lockedAmount))
 
@@ -53,7 +53,7 @@ const SetPriceStage: React.FC<any> = ({
     <>
     <GreyedOutContainer>
         <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
-          {t('Lottery ID')}
+          {t('Lotterys ID')}
         </Text>
         <Input
           type="text"

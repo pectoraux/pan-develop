@@ -52,9 +52,18 @@ const NFTMedia: FC<any> = ({ width, height, nft, borderRadius = 'default', as, .
   }, [dispatch, isIntersecting, setTryVideoNftMedia])
   // [gif, mp4, webm, original, thumbnail]
   console.log("nft?.images================>", nft?.images)
-  const chunks = nft?.images && nft?.images?.split(",")
-  let thumbnail = chunks?.length > 0 && nft?.images?.split(",")[0]
-  let mp4 = chunks?.length > 1 && nft?.images?.split(",").slice(1).join(",")
+  let mp4;
+  let chunks;
+  let thumbnail;
+  try {
+    chunks = nft?.images && nft?.images?.split(",")
+    thumbnail = chunks?.length > 0 && nft?.images?.split(",")[0]
+    mp4 = chunks?.length > 1 && nft?.images?.split(",").slice(1).join(",")
+  } catch(err) {
+    chunks = nft?.images
+    thumbnail = nft?.images?.length > 0 && nft?.images[0]
+    mp4 = nft?.images?.length > 1 && nft?.images?.slice(1).join(",")
+  }
   console.log("1NFTMedia===================>", nft)
   console.log("2NFTMedia===================>", mp4)
   console.log("3NFTMedia===================>", thumbnail)

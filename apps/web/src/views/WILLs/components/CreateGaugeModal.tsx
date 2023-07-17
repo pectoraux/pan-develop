@@ -119,6 +119,7 @@ interface BuyModalProps extends InjectedModalProps {
 // }
 
 const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, currAccount, currency, onDismiss }) => {
+  variant="admin"
   const [stage, setStage] = useState(variant === "user" ? LockStage.SETTINGS : LockStage.ADMIN_SETTINGS)
   const [confirmedTxHash, setConfirmedTxHash] = useState('')
   const { t } = useTranslation()
@@ -128,7 +129,7 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
   const { toastSuccess } = useToast()
   const router = useRouter()
   const stakingTokenContract = useERC20(currency?.address || currAccount?.token?.address || '')
-  const willContract = useWILLContract(pool?.willAddress || router.query.will || '')
+  const willContract = useWILLContract(pool?.id || router.query.will || '')
   const willNoteContract = useWILLNote()
   console.log("mcurrencyy===============>", currAccount, currency, pool, willContract)
   // const [onPresentPreviousTx] = useModal(<ActivityHistory />,)
@@ -169,6 +170,9 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
     message: '',
     tag: '',
     profileId: currAccount?.profileId ?? '0',
+    minWithdrawableNow: '',
+    minNFTWithdrawableNow: '',
+    willWithdrawalPeriod: '',
     uriGenerator: '',
     autoCharge: 0,
     like: 0,
@@ -377,7 +381,7 @@ const goBack = () => {
     // eslint-disable-next-line consistent-return
     onConfirm: () => {
       if (stage === LockStage.CONFIRM_ADD_BALANCE) {
-        let { amountReceivable } = state.amountReceivable
+        let amountReceivable = state.amountReceivable
         if (state.nftype === 0) {
           amountReceivable = getDecimalAmount(amountReceivable ?? 0, currency?.decimals)
         }
@@ -387,7 +391,7 @@ const goBack = () => {
         .catch((err) => console.log("CONFIRM_ADD_BALANCE===============>", err))
       }
       if (stage === LockStage.CONFIRM_REMOVE_BALANCE) {
-        let { amountPayable } = state.amountPayable
+        let amountPayable = state.amountPayable
         if (state.nftype === 0) {
           amountPayable = getDecimalAmount(amountPayable ?? 0, currency?.decimals)
         }
@@ -405,12 +409,12 @@ const goBack = () => {
       if (stage === LockStage.CONFIRM_UPDATE_ACTIVE_PERIOD) {
         const args = [currency?.address]
         console.log("CONFIRM_UPDATE_ACTIVE_PERIOD===============>", args)
-        return callWithGasPrice(willContract, 'updateAutoCharge', args)
+        return callWithGasPrice(willContract, 'updateActivePeriod', args)
         .catch((err) => console.log("CONFIRM_UPDATE_ACTIVE_PERIOD===============>", err))
       }
       if (stage === LockStage.CONFIRM_STOP_WITHDRAWAL_COUNTDOWN) {
         console.log("CONFIRM_STOP_WITHDRAWAL_COUNTDOWN===============>")
-        return callWithGasPrice(willContract, 'updateAutoCharge', [])
+        return callWithGasPrice(willContract, 'stopWillWithdrawalCountdown', [])
         .catch((err) => console.log("CONFIRM_STOP_WITHDRAWAL_COUNTDOWN===============>", err))
       }
       if (stage === LockStage.CONFIRM_PAY) {
@@ -447,15 +451,11 @@ const goBack = () => {
       }
       if (stage === LockStage.CONFIRM_UPDATE_PARAMETERS) {
         const args = [
-          !!state.profileRequired,
-          state.bountyRequired,
-          state.collectionId,
-          state.bufferTime,
-          state.maxNotesPerProtocol,
-          state.adminBountyRequired,
-          state.adminCreditShare,
-          state.adminDebitShare,
-          state.period,
+          state.profileId,
+          state.updatePeriod,
+          state.minWithdrawableNow,
+          state.minNFTWithdrawableNow,
+          state.willWithdrawalPeriod,
         ]
         console.log("CONFIRM_UPDATE_PARAMETERS===============>", args)
         return callWithGasPrice(willContract, 'updateParameters', args)

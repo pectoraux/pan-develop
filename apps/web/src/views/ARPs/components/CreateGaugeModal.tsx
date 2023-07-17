@@ -8,7 +8,7 @@ import BigNumber from 'bignumber.js'
 import useTheme from 'hooks/useTheme'
 import { requiresApproval } from 'utils/requiresApproval'
 import { getDecimalAmount, getBalanceNumber } from '@pancakeswap/utils/formatBalance'
-import { useERC20, useARPContract, useARPNote, useARPHelper } from 'hooks/useContract'
+import { useERC20, useARPContract, useARPNote, useARPHelper, useARPMinter } from 'hooks/useContract'
 import { convertTimeToSeconds } from 'utils/timeHelper'
 import { useWeb3React } from '@pancakeswap/wagmi'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
@@ -94,9 +94,7 @@ const modalTitles = (t: TranslateFunction) => ({
   [LockStage.UPDATE_MINT_INFO]: t('Update Mint Info'),
   [LockStage.UPDATE_CATEGORY]: t('Update Category'),
   [LockStage.UPDATE_URI_GENERATOR]: t('Update URI Generator'),
-  [LockStage.UPDATE_PROTOCOL]: t('Update Protocol'),
   [LockStage.UPDATE_OWNER]: t('Update Owner'),
-  [LockStage.UPDATE_BOUNTY_ID]: t('Update Bounty ID'),
   [LockStage.AUTOCHARGE]: t('Auto Charge'),
   [LockStage.CLAIM_NOTE]: t('Claim Note'),
   [LockStage.DELETE]: t('Delete'),
@@ -129,7 +127,6 @@ const modalTitles = (t: TranslateFunction) => ({
   [LockStage.CONFIRM_UPDATE_CATEGORY]: t('Back'),
   [LockStage.CONFIRM_WITHDRAW]: t('Back'),
   [LockStage.CONFIRM_UPDATE_MINT_INFO]: t('Back'),
-  [LockStage.CONFIRM_MINT_EXTRA]: t('Back'),
   [LockStage.CONFIRM_UPDATE_PROTOCOL]: t('Back'),
   [LockStage.CONFIRM_UPDATE_PARAMETERS]: t('Back'),
   [LockStage.CONFIRM_UPDATE_OWNER]: t('Back'),
@@ -203,6 +200,7 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
   const arpContract = useARPContract(pool?.arpAddress || router.query.arp || '')
   const arpNoteContract = useARPNote()
   const arpHelperContract = useARPHelper()
+  const arpMinterContract = useARPMinter()
   console.log("mcurrencyy===============>", currAccount, currency, pool, arpContract)
   // const [onPresentPreviousTx] = useModal(<ActivityHistory />,)
 
@@ -212,7 +210,7 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
     avatar: pool?.avatar,
     bountyId: pool?.bountyId ?? '',
     profileId: pool?.profileId,
-    protocolId: currAccount?.id,
+    protocolId: currAccount?.protocolId || 0,
     extraMint: '',
     category: '',
     contractAddress: '',
@@ -254,7 +252,7 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
     collectionId: '',
     applicationLink: pool?.applicationLink ?? '',
     arpDescription: pool?.arpDescription ?? '',
-    owner: currAccount?.owner || account
+    owner: currAccount?.owner || account,
   }))
 
   const updateValue = (key: any, value: any) => {
@@ -644,6 +642,12 @@ const goBack = () => {
         return callWithGasPrice(arpContract, 'updateAutoCharge', args)
         .catch((err) => console.log("CONFIRM_AUTOCHARGE===============>", err))
       }
+      if (stage === LockStage.CONFIRM_VOTE) {
+        const args = [pool?.arpAddress, state.profileId, !!state.like]
+        console.log("CONFIRM_VOTE===============>", args)
+        return callWithGasPrice(arpMinterContract, 'vote', args)
+        .catch((err) => console.log("CONFIRM_VOTE===============>", err))
+      }
       if (stage === LockStage.CONFIRM_PAY) {
         const amountPayable = getDecimalAmount(state.amountPayable ?? 0, currency?.decimals)
         const args = [state.protocolId, amountPayable?.toString()]
@@ -665,7 +669,7 @@ const goBack = () => {
       if (stage === LockStage.CONFIRM_UPDATE_TOKEN_ID) {
         const args = [state.tokenId]
         console.log("CONFIRM_UPDATE_TOKEN_ID===============>", args)
-        return callWithGasPrice(arpContract, 'migrate', args)
+        return callWithGasPrice(arpContract, 'updateTokenId', args)
         .catch((err) => console.log("CONFIRM_UPDATE_TOKEN_ID===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_USER_PERCENTILES) {
@@ -687,27 +691,27 @@ const goBack = () => {
         .catch((err) => console.log("CONFIRM_UPDATE_PENALTY_DIVISOR===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_PAID_PAYABLE) {
-        const args = [pool?.id,state.toAddress,state.protocolId, state.numPeriods]
+        const args = [state.protocolId, state.numPeriods]
         console.log("CONFIRM_UPDATE_PAID_PAYABLE===============>", args)
-        return callWithGasPrice(arpContract, 'updateMigrationPoint', args)
+        return callWithGasPrice(arpContract, 'updatePaidPayable', args)
         .catch((err) => console.log("CONFIRM_UPDATE_PAID_PAYABLE===============>", err))
       }
       if (stage === LockStage.CONFIRM_TRANSFER_TO_NOTE_RECEIVABLE) {
-        const args = [pool?.id,state.toAddress,state.protocolId,state.numPeriods]
+        const args = [pool?.arpAddress,state.toAddress,state.protocolId,state.numPeriods]
         console.log("CONFIRM_TRANSFER_TO_NOTE_RECEIVABLE===============>", args)
         return callWithGasPrice(arpNoteContract, 'transferDueToNoteReceivable', args)
         .catch((err) => console.log("CONFIRM_TRANSFER_TO_NOTE_RECEIVABLE===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_DUE_BEFORE_PAYABLE) {
-        const args = [pool?.id, !!state.add]
+        const args = [pool?.arpAddress, !!state.add]
         console.log("CONFIRM_UPDATE_DUE_BEFORE_PAYABLE===============>", args)
-        return callWithGasPrice(arpContract, 'updateDueBeforePayable', args)
+        return callWithGasPrice(arpNoteContract, 'updateDueBeforePayable', args)
         .catch((err) => console.log("CONFIRM_UPDATE_DUE_BEFORE_PAYABLE===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_TAG_REGISTRATION) {
         const args = [state.tag,!!state.add]
         console.log("CONFIRM_UPDATE_TAG_REGISTRATION===============>", args)
-        return callWithGasPrice(arpHelperContract, 'updateTagRegistration', args)
+        return callWithGasPrice(arpMinterContract, 'updateTagRegistration', args)
         .catch((err) => console.log("CONFIRM_UPDATE_TAG_REGISTRATION===============>", err))
       }
       if (stage === LockStage.CONFIRM_NOTIFY_REWARDS) {
@@ -719,9 +723,9 @@ const goBack = () => {
       }
       if (stage === LockStage.CONFIRM_NOTIFY_DEBT) {
         const amountPayable = getDecimalAmount(state.amountPayable ?? 0, currency?.decimals)
-        const args = [state.contractAddress,state.owner,amountPayable?.toString()]
+        const args = [currency?.address,amountPayable?.toString()]
         console.log("CONFIRM_NOTIFY_DEBT===============>", args)
-        return callWithGasPrice(arpContract, 'notifyDebit', args)
+        return callWithGasPrice(arpContract, 'notifyDebt', args)
         .catch((err) => console.log("CONFIRM_NOTIFY_DEBT===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_TAX_CONTRACT) {
@@ -737,15 +741,15 @@ const goBack = () => {
         .catch((err) => console.log("CONFIRM_UPDATE_USER_OWNER===============>", err))
       }
       if (stage === LockStage.CONFIRM_TRANSFER_TO_NOTE_PAYABLE) {
-        const args = [pool?.id,state.toAddress,state.protocolId,state.amountPayable]
+        const args = [pool?.arpAddress,state.toAddress,state.protocolId,state.amountPayable]
         console.log("CONFIRM_TRANSFER_TO_NOTE_PAYABLE===============>", args)
-        return callWithGasPrice(arpContract, 'transferDueToNotePayable', args)
+        return callWithGasPrice(arpNoteContract, 'transferDueToNotePayable', args)
         .catch((err) => console.log("CONFIRM_TRANSFER_TO_NOTE_PAYABLE===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_SPONSOR_MEDIA) {
         const args = [state.protocolId,state.tag]
         console.log("CONFIRM_UPDATE_SPONSOR_MEDIA===============>", args)
-        return callWithGasPrice(arpHelperContract, 'updateSponsorMedia', args)
+        return callWithGasPrice(arpMinterContract, 'updateSponsorMedia', args)
         .catch((err) => console.log("CONFIRM_UPDATE_SPONSOR_MEDIA===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_CAP) {
@@ -756,23 +760,23 @@ const goBack = () => {
       }
       if (stage === LockStage.CONFIRM_UPDATE_EXCLUDED_CONTENT) {
         console.log("CONFIRM_UPDATE_EXCLUDED_CONTENT===============>",[state.tag, state.contentType, !!state.add])
-        return callWithGasPrice(arpHelperContract, 'updateExcludedContent', [state.tag, state.contentType, !!state.add])
+        return callWithGasPrice(arpMinterContract, 'updateExcludedContent', [state.tag, state.contentType, !!state.add])
         .catch((err) => console.log("CONFIRM_UPDATE_EXCLUDED_CONTENT===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_PRICE_PER_MINUTE) {
         const pricePerMinute = getDecimalAmount(state.pricePerMinute ?? 0, currency?.decimals)
         console.log("CONFIRM_UPDATE_PRICE_PER_MINUTE===============>",[pricePerMinute?.toString()])
-        return callWithGasPrice(arpHelperContract, 'updatePricePerAttachMinutes', [pricePerMinute?.toString()])
+        return callWithGasPrice(arpMinterContract, 'updatePricePerAttachMinutes', [pricePerMinute?.toString()])
         .catch((err) => console.log("CONFIRM_UPDATE_PRICE_PER_MINUTE===============>", err))
       }
       if (stage === LockStage.CONFIRM_BURN) {
         console.log("CONFIRM_BURN===============>",[state.tokenId])
-        return callWithGasPrice(arpNoteContract, 'burn', [state.tokenId])
+        return callWithGasPrice(arpHelperContract, 'burn', [state.tokenId])
         .catch((err) => console.log("CONFIRM_BURN===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_CATEGORY) {
-        console.log("CONFIRM_UPDATE_CATEGORY===============>",[pool?.id, state.category])
-        return callWithGasPrice(arpHelperContract, 'updateCategory', [pool?.id, state.category])
+        console.log("CONFIRM_UPDATE_CATEGORY===============>",[pool?.arpAddress, state.category])
+        return callWithGasPrice(arpMinterContract, 'updateCategory', [pool?.arpAddress, state.category])
         .catch((err) => console.log("CONFIRM_UPDATE_CATEGORY===============>", err))
       }
       if (stage === LockStage.CONFIRM_WITHDRAW) {
@@ -783,7 +787,7 @@ const goBack = () => {
         .catch((err) => console.log("CONFIRM_WITHDRAW===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_MINT_INFO) {
-        const args = [pool?.id, state.extraMint, state.tokenId]
+        const args = [pool?.arpAddress, state.extraMint, state.tokenId]
         console.log("CONFIRM_UPDATE_MINT_INFO===============>",args)
         return callWithGasPrice(arpHelperContract, 'updateMintInfo', args)
         .catch((err) => console.log("CONFIRM_UPDATE_MINT_INFO===============>", err))
@@ -844,13 +848,13 @@ const goBack = () => {
         const amountReceivable = getDecimalAmount(state.amountReceivable ?? 0, currency?.decimals)
         const args = [
           state.contractAddress,
-          pool?.id, 
+          pool?.arpAddress, 
           amountReceivable.toString(), 
           state.tag,
           state.message
         ]
         console.log("CONFIRM_SPONSOR_TAG===============>",args)
-        return callWithGasPrice(arpHelperContract, 'sponsorTag', args)
+        return callWithGasPrice(arpMinterContract, 'sponsorTag', args)
         .catch((err) => console.log("CONFIRM_SPONSOR_TAG===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_OWNER) {
@@ -860,9 +864,9 @@ const goBack = () => {
         .catch((err) => console.log("CONFIRM_UPDATE_OWNER===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_URI_GENERATOR) {
-        const args = [pool?.id, state.uriGenerator]
+        const args = [pool?.arpAddress, state.uriGenerator]
         console.log("CONFIRM_UPDATE_URI_GENERATOR===============>",args)
-        return callWithGasPrice(arpHelperContract, 'updateUriGenerator', args)
+        return callWithGasPrice(arpMinterContract, 'updateUriGenerator', args)
         .catch((err) => console.log("CONFIRM_UPDATE_URI_GENERATOR===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_AUTOCHARGE) {
@@ -888,7 +892,7 @@ const goBack = () => {
       }
       if (stage === LockStage.CONFIRM_CLAIM_NOTE) {
         console.log("CONFIRM_CLAIM_NOTE===============>",[state.tokenId])
-        return callWithGasPrice(arpContract, 'claimPendingRevenueFromNote', [state.tokenId])
+        return callWithGasPrice(arpNoteContract, 'claimPendingRevenueFromNote', [state.tokenId])
         .catch((err) => console.log("CONFIRM_CLAIM_NOTE===============>", err))
       }
     },
@@ -1073,6 +1077,7 @@ const goBack = () => {
       {stage === LockStage.UPDATE_AUTOCHARGE && 
       <UpdateAutoChargeStage
         state={state} 
+        handleChange={handleChange}
         handleRawValueChange={handleRawValueChange}
         continueToNextStage={continueToNextStage} 
       />}

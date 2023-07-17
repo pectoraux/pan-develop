@@ -49,7 +49,6 @@ const modalTitles = (t: TranslateFunction) => ({
   [LockStage.MINT_NOTE]: t('Mint Transfer Note'),
   [LockStage.SPLIT_SHARES]: t('Split Shares'),
   [LockStage.CLAIM_NOTE]: t('Claim Revenue from Note'),
-  [LockStage.CLAIM_NOTE]: t('Claim Note'),
   [LockStage.UPLOAD]: t('Upload Documents'),
   [LockStage.START_LITIGATIONS]: t('Litigations'),
   [LockStage.COSIGNS]: t('COSIGNS'),

@@ -66,6 +66,19 @@ const SetPriceStage: React.FC<any> = ({
     </GreyedOutContainer>
     <GreyedOutContainer>
         <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
+          {t('Betting Period')}
+        </Text>
+        <Input
+          type="text"
+          scale="sm"
+          name='period'
+          value={state.period}
+          placeholder={t('input betting period')}
+          onChange={handleChange}
+        />
+    </GreyedOutContainer>
+    <GreyedOutContainer>
+        <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
           {t('Ticket Numbers')}
         </Text>
         <Input

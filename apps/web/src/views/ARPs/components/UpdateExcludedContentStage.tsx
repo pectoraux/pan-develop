@@ -51,8 +51,8 @@ const SetPriceStage: React.FC<any> = ({
         <Input
           type="text"
           scale="sm"
-          name='contentName'
-          value={state.contentName}
+          name='contentType'
+          value={state.contentType}
           placeholder={t('input content to exclude')}
           onChange={handleChange}
         />

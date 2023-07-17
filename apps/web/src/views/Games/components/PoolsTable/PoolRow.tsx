@@ -20,7 +20,7 @@ const PoolRow: React.FC<any> = ({
   const { t } = useTranslation()
   const currState = useCurrPool()
   const currAccount = useMemo(() => pool?.accounts?.find((n) => n.id === currState[pool?.id]), [pool, currState])
-  console.log("gamepool1====>", pool, currAccount)
+  console.log("gamepool11====>", pool, currAccount)
   return (
     <ExpandRow
       initialActivity={initialActivity}

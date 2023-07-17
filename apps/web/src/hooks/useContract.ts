@@ -31,6 +31,7 @@ import {
   Zap,
   Stakemarket,
   Stakemarketnote,
+  Stakemarkethelper,
   Stakemarketbribe,
   Stakemarketvoter,
   Trustbounties,
@@ -72,6 +73,7 @@ import {
   getLotteryV2Contract,
   getLotteryContract,
   getRandomNumberGenerator,
+  getLotteryRandomNumberGenerator,
   getLotteryHelperContract,
   getMasterchefContract,
   getMasterchefV1Contract,
@@ -85,6 +87,7 @@ import {
   getPredictionsContract,
   getPredictionsV1Contract,
   getProfileContract,
+  getProfileHelperContract,
   getSouschefContract,
   getTradingCompetitionContractEaster,
   getTradingCompetitionContractFanToken,
@@ -99,6 +102,7 @@ import {
   getRampAdsContract,
   getAuditorContract,
   getAuditorHelperContract,
+  getAuditorHelper2Contract,
   getAuditorNoteContract,
   getAuditorFactoryContract,
   getWorldContract,
@@ -155,6 +159,7 @@ import {
   getTrustBountiesHelperContract,
   getTrustBountiesVoterContract,
   getStakeMarketNoteContract,
+  getStakeMarketHelperContract,
   getStakeMarketBribeContract,
   getStakeMarketVoterContract,
   getMarketCollectionsContract,
@@ -163,10 +168,12 @@ import {
   getARPContract,
   getARPNoteContract,
   getARPHelperContract,
+  getARPMinterContract,
   getARPFactoryContract,
   getBILLContract,
   getBILLFactoryContract,
   getBILLHelperContract,
+  getBILLMinterContract,
   getBILLNoteContract,
   getGameFactoryContract,
   getGameHelperContract,
@@ -251,6 +258,11 @@ export const useProfileContract = (withSignerIfPossible = true) => {
   return useMemo(() => getProfileContract(providerOrSigner), [providerOrSigner])
 }
 
+export const useProfileHelperContract = (withSignerIfPossible = true) => {
+  const providerOrSigner = useProviderOrSigner(withSignerIfPossible)
+  return useMemo(() => getProfileHelperContract(providerOrSigner), [providerOrSigner])
+}
+
 export const useLotteryV2Contract = () => {
   const providerOrSigner = useProviderOrSigner()
   return useMemo(() => getLotteryV2Contract(providerOrSigner), [providerOrSigner])
@@ -264,6 +276,11 @@ export const useLotteryContract = () => {
 export const useRandomNumberGenerator = () => {
   const providerOrSigner = useProviderOrSigner()
   return useMemo(() => getRandomNumberGenerator(providerOrSigner), [providerOrSigner])
+}
+
+export const useLotteryRandomNumberGenerator = () => {
+  const providerOrSigner = useProviderOrSigner()
+  return useMemo(() => getLotteryRandomNumberGenerator(providerOrSigner), [providerOrSigner])
 }
 
 export const useLotteryHelperContract = () => {
@@ -677,6 +694,18 @@ export const useStakeMarketNoteContract = ()
   )
 }
 
+export const useStakeMarketHelperContract = () 
+: { reader: Stakemarkethelper; signer: Stakemarkethelper } => {
+  const { data: signer } = useSigner()
+  return useMemo(
+    () => ({
+      reader: getStakeMarketHelperContract(null),
+      signer: getStakeMarketHelperContract(signer),
+    }),
+    [signer],
+  )
+}
+
 export const useTrustBountiesVoterContract = () 
 : { reader: Trustbountiesvoter; signer: Trustbountiesvoter } => {
   const { data: signer } = useSigner()
@@ -845,7 +874,7 @@ export const useRampContract = (address, withSignerIfPossible = true, withPayswa
   let providerOrSigner = useProviderOrSigner(withSignerIfPossible)
   const provider = useProvider()
   if (withPayswapSigner) {
-    providerOrSigner = new Wallet(process.env.NEXT_PUBLIC_PAYSWAP_SIGNER, provider)
+    providerOrSigner = new Wallet(process.env.NEXT_PUBLIC_PAYSWAP_SIGNER, provider as any)
   }
   return useMemo(() => getRampContract(address, providerOrSigner), [providerOrSigner, address])
 }
@@ -880,6 +909,11 @@ export const useAuditorHelper = () => {
   return useMemo(() => getAuditorHelperContract(signer), [signer])
 }
 
+export const useAuditorHelper2 = () => {
+  const { data: signer } = useSigner()
+  return useMemo(() => getAuditorHelper2Contract(signer), [signer])
+}
+
 export const useAuditorNote = () => {
   const { data: signer } = useSigner()
   return useMemo(() => getAuditorNoteContract(signer), [signer])
@@ -898,6 +932,11 @@ export const useARPFactory = () => {
 export const useARPHelper = () => {
   const { data: signer } = useSigner()
   return useMemo(() => getARPHelperContract(signer), [signer])
+}
+
+export const useARPMinter = () => {
+  const { data: signer } = useSigner()
+  return useMemo(() => getARPMinterContract(signer), [signer])
 }
 
 export const useARPNote = () => {
@@ -935,6 +974,11 @@ export const useBILLHelper = () => {
   return useMemo(() => getBILLHelperContract(signer), [signer])
 }
 
+export const useBILLMinter = () => {
+  const { data: signer } = useSigner()
+  return useMemo(() => getBILLMinterContract(signer), [signer])
+}
+
 export const useBILLNote = () => {
   const { data: signer } = useSigner()
   return useMemo(() => getBILLNoteContract(signer), [signer])
@@ -951,7 +995,7 @@ export const useGameMinter = (withPayswapSigner = false) => {
   let signerFinal = signer
   if (withPayswapSigner) {
     const provider = new JsonRpcProvider("https://rpc.testnet.fantom.network", 4002)
-    signerFinal = new Wallet(process.env.NEXT_PUBLIC_PAYSWAP_SIGNER, provider)
+    signerFinal = new Wallet(process.env.NEXT_PUBLIC_PAYSWAP_SIGNER, provider as any)
   }
   return useMemo(() => getGameMinterContract(signerFinal), [signerFinal])
 }

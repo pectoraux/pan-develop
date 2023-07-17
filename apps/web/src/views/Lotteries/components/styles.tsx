@@ -16,6 +16,7 @@ export const stagesWithApproveButton = [
 ]
 
 export const stagesWithConfirmButton = [
+  LockStage.CONFIRM_ADMIN_WITHDRAW,
   LockStage.CONFIRM_START_LOTTERY,
   LockStage.CONFIRM_UPDATE_BURN_TOKEN_FOR_CREDIT,
   LockStage.CONFIRM_CLAIM_LOTTERY_REVENUE,

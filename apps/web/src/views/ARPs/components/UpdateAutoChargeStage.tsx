@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { Flex, Grid, Box, Text, Button, ErrorIcon, ButtonMenu, ButtonMenuItem } from '@pancakeswap/uikit'
+import { Flex, Grid, Box, Text, Button, ErrorIcon, ButtonMenu, ButtonMenuItem, Input } from '@pancakeswap/uikit'
 import { useTranslation } from '@pancakeswap/localization'
 import { StyledItemRow } from 'views/Nft/market/components/Filters/ListFilter/styles'
 import { GreyedOutContainer, Divider } from './styles'
@@ -14,6 +14,7 @@ interface SetPriceStageProps {
 // Also shown when user wants to adjust the price of already listed NFT
 const SetPriceStage: React.FC<any> = ({
   state,
+  handleChange,
   handleRawValueChange,
   continueToNextStage,
 }) => {
@@ -28,6 +29,19 @@ const SetPriceStage: React.FC<any> = ({
 
   return (
     <>
+    <GreyedOutContainer>
+        <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
+          {t('Input VeNFT Token ID')}
+        </Text>
+        <Input
+          type="text"
+          scale="sm"
+          name='tokenId'
+          value={state.tokenId}
+          placeholder={t('input associate veNFT ID')}
+          onChange={handleChange}
+        />
+    </GreyedOutContainer>
     <GreyedOutContainer>
       <StyledItemRow>
         <Text fontSize="12px" color="secondary" textTransform="uppercase" paddingTop="3px" paddingRight="50px" bold>

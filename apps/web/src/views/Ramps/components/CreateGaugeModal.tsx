@@ -849,7 +849,7 @@ console.log("variant================>", variant, stage === LockStage.INIT_RAMP)
       }
       if (stage === LockStage.CONFIRM_CLAIM_SPONSOR_REVENUE) {
         console.log("CONFIRM_CLAIM_SPONSOR_REVENUE===============>", [pool?.rampAddress])
-        return callWithGasPrice(rampHelperContract, 'claimPendingRevenueFromSponsors', [pool?.rampAddress])
+        return callWithGasPrice(rampAdsContract, 'claimPendingRevenueFromSponsors', [pool?.rampAddress])
         .catch((err) => console.log("CONFIRM_CLAIM_SPONSOR_REVENUE===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_TOKEN_ID) {
@@ -868,7 +868,7 @@ console.log("variant================>", variant, stage === LockStage.INIT_RAMP)
       if (stage === LockStage.CONFIRM_UPDATE_SPONSOR_MEDIA) {
         const args = [state.tag]
         console.log("CONFIRM_UPDATE_SPONSOR_MEDIA===============>", args)
-        return callWithGasPrice(rampAdsContract, 'sponsorTag', args)
+        return callWithGasPrice(rampAdsContract, 'updateSponsorMedia', args)
         .catch((err) => console.log("CONFIRM_UPDATE_SPONSOR_MEDIA===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_DEV_TOKEN_ID) {

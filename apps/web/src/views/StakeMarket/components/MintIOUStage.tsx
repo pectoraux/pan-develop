@@ -66,6 +66,19 @@ const SetPriceStage: React.FC<any> = ({
     </GreyedOutContainer>
     <GreyedOutContainer>
         <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
+          {t('Partner Array Start Index')}
+        </Text>
+        <Input
+          type="text"
+          scale="sm"
+          name='start'
+          value={state.start}
+          placeholder={t('input partner array start index')}
+          onChange={handleChange}
+        />
+    </GreyedOutContainer>
+    <GreyedOutContainer>
+        <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
           {t('IOU Reason')}
         </Text>
         <Input

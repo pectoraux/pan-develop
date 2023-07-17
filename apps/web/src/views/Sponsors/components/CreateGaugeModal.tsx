@@ -55,7 +55,6 @@ const modalTitles = (t: TranslateFunction) => ({
   [LockStage.VOTE]: t('Vote'),
   [LockStage.PAY]: t('Pay'),
   [LockStage.UPDATE_DESCRIPTION]: t('Update Description'),
-  [LockStage.COSIGNS]: t('Cosigns'),
   [LockStage.DELETE]: t('Delete'),
   [LockStage.CLAIM_NOTE]: t('Claim Note'),
   [LockStage.TRANSFER_TO_NOTE_RECEIVABLE]: t('Transfer Note Receivable'),
@@ -147,6 +146,7 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
     bountyId: pool?.bountyId,
     profileId: pool?.profileId,
     tokenId: pool?.tokenId,
+    sponsor: pool?.sponsorAddress,
     maxNotesPerProtocol: pool?.maxNotesPerProtocol,
     amountPayable: getBalanceNumber(currAccount?.amountPayable ?? '0', currency?.decimals),
     periodPayable: currAccount?.periodPayable,
@@ -374,7 +374,7 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
     // eslint-disable-next-line consistent-return
     onConfirm: () => {
       if (stage === LockStage.CONFIRM_CLAIM_NOTE) {
-        const args = [pool?.id, state.tokenId]
+        const args = [state.sponsor, state.tokenId]
         console.log("CONFIRM_CLAIM_NOTE===============>",args)
         return callWithGasPrice(sponsorHelperContract, 'claimRevenueFromNote', args)
         .catch((err) => console.log("CONFIRM_CLAIM_NOTE===============>", err))
@@ -467,9 +467,9 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
         .catch((err) => console.log("CONFIRM_DELETE_PROTOCOL===============>", err, [currAccount?.owner]))
       }
       if (stage === LockStage.CONFIRM_DELETE) {
-        console.log("CONFIRM_DELETE_PROTOCOL===============>",[pool?.id])
-        return callWithGasPrice(sponsorHelperContract, 'deleteSponsor', [pool?.id])
-        .catch((err) => console.log("CONFIRM_DELETE_PROTOCOL===============>", err, [pool?.id]))
+        console.log("CONFIRM_DELETE===============>",[state.sponsor])
+        return callWithGasPrice(sponsorHelperContract, 'deleteSponsor', [state.sponsor])
+        .catch((err) => console.log("CONFIRM_DELETE===============>", err, [state.sponsor]))
       }
       if (stage === LockStage.CONFIRM_UPDATE_BOUNTY_ID) {
         console.log("CONFIRM_UPDATE_BOUNTY===============>", [state.bountyId])
@@ -501,7 +501,7 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
         .catch((err) => console.log("CONFIRM_VOTE===============>", err, args))
       }
       if (stage === LockStage.CONFIRM_TRANSFER_TO_NOTE_RECEIVABLE) {
-        const args = [pool?.id,state.toAddress,state.numPeriods]
+        const args = [state.sponsor,state.toAddress,state.numPeriods]
         console.log("CONFIRM_TRANSFER_TO_NOTE_RECEIVABLE===============>", args)
         return callWithGasPrice(sponsorHelperContract, 'transferDueToNote', args)
         .catch((err) => console.log("CONFIRM_TRANSFER_TO_NOTE_RECEIVABLE===============>", err))

@@ -365,6 +365,18 @@ const BuyModal: React.FC<any> = ({ variant="user", pool, currency, onDismiss }) 
           continueToNextStage={continueToNextStage} 
         />
       } */}
+      {stage === LockStage.VOTE_UP && 
+      <VoteUpStage 
+        tokenId={tokenId} 
+        setTokenId={setTokenId} 
+        continueToNextStage={continueToNextStage} 
+      />}
+      {stage === LockStage.VOTE_DOWN && 
+      <VoteDownStage 
+        tokenId={tokenId} 
+        setTokenId={setTokenId} 
+        continueToNextStage={continueToNextStage} 
+      />}
       {stage === LockStage.UPDATE_BOUNTY && <UpdateBountyStage tokenId={tokenId} setTokenId={setTokenId} continueToNextStage={continueToNextStage} />}
       {stage === LockStage.UPDATE_BRIBES && <BribesStage lockedAmount={lockedAmount} setLockedAmount={setLockedAmount} currency={currency} continueToNextStage={continueToNextStage} />}
       {stage === LockStage.WITHDRAW && 

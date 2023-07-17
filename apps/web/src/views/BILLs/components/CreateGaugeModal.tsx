@@ -8,7 +8,7 @@ import BigNumber from 'bignumber.js'
 import useTheme from 'hooks/useTheme'
 import { requiresApproval } from 'utils/requiresApproval'
 import { getDecimalAmount, getBalanceNumber } from '@pancakeswap/utils/formatBalance'
-import { useERC20, useBILLContract, useBILLNote, useBILLHelper } from 'hooks/useContract'
+import { useERC20, useBILLContract, useBILLNote, useBILLHelper, useBILLMinter } from 'hooks/useContract'
 import { convertTimeToSeconds } from 'utils/timeHelper'
 import { useWeb3React } from '@pancakeswap/wagmi'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
@@ -91,9 +91,7 @@ const modalTitles = (t: TranslateFunction) => ({
   [LockStage.UPDATE_MINT_INFO]: t('Update Mint Info'),
   [LockStage.UPDATE_CATEGORY]: t('Update Category'),
   [LockStage.UPDATE_URI_GENERATOR]: t('Update URI Generator'),
-  [LockStage.UPDATE_PROTOCOL]: t('Update Protocol'),
   [LockStage.UPDATE_OWNER]: t('Update Owner'),
-  [LockStage.UPDATE_BOUNTY_ID]: t('Update Bounty ID'),
   [LockStage.AUTOCHARGE]: t('Auto Charge'),
   [LockStage.CLAIM_NOTE]: t('Claim Note'),
   [LockStage.MINT_EXTRA]: t('Mint Extra'),
@@ -196,6 +194,7 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
   const billContract = useBILLContract(pool?.billAddress || router.query.bill || '')
   const billNoteContract = useBILLNote()
   const billHelperContract = useBILLHelper()
+  const billMinterContract = useBILLMinter()
   console.log("mcurrencyy===============>", currAccount, currency, pool, billContract)
   // const [onPresentPreviousTx] = useModal(<ActivityHistory />,)
 
@@ -206,7 +205,7 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
     avatar: pool?.avatar,
     bountyId: pool?.bountyId ?? '',
     profileId: pool?.profileId,
-    // protocolId: currAccount?.id,
+    bill: pool?.billAddress ?? '',
     extraMint: '',
     category: '',
     contractAddress: '',
@@ -689,15 +688,15 @@ const goBack = () => {
         .catch((err) => console.log("CONFIRM_UPDATE_PARAMETERS===============>", err))
       }
       if (stage === LockStage.CONFIRM_TRANSFER_TO_NOTE_RECEIVABLE) {
-        const args = [pool?.id,state.toAddress,state.protocolId]
+        const args = [state.bill,state.toAddress,state.protocolId]
         console.log("CONFIRM_TRANSFER_TO_NOTE_RECEIVABLE===============>", args)
         return callWithGasPrice(billNoteContract, 'transferDueToNoteReceivable', args)
         .catch((err) => console.log("CONFIRM_TRANSFER_TO_NOTE_RECEIVABLE===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_DUE_BEFORE_PAYABLE) {
-        const args = [pool?.id, !!state.add]
+        const args = [state.bill, !!state.add]
         console.log("CONFIRM_UPDATE_DUE_BEFORE_PAYABLE===============>", args)
-        return callWithGasPrice(billContract, 'updateDueBeforePayable', args)
+        return callWithGasPrice(billNoteContract, 'updateDueBeforePayable', args)
         .catch((err) => console.log("CONFIRM_UPDATE_DUE_BEFORE_PAYABLE===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_TAG_REGISTRATION) {
@@ -735,9 +734,9 @@ const goBack = () => {
         .catch((err) => console.log("CONFIRM_UPDATE_USER_OWNER===============>", err))
       }
       if (stage === LockStage.CONFIRM_TRANSFER_TO_NOTE_PAYABLE) {
-        const args = [pool?.id,state.toAddress,state.protocolId,state.amountPayable]
+        const args = [state.bill,state.toAddress,state.protocolId,state.amountPayable]
         console.log("CONFIRM_TRANSFER_TO_NOTE_PAYABLE===============>", args)
-        return callWithGasPrice(billContract, 'transferDueToNotePayable', args)
+        return callWithGasPrice(billNoteContract, 'transferDueToNotePayable', args)
         .catch((err) => console.log("CONFIRM_TRANSFER_TO_NOTE_PAYABLE===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_SPONSOR_MEDIA) {
@@ -765,12 +764,12 @@ const goBack = () => {
       }
       if (stage === LockStage.CONFIRM_BURN) {
         console.log("CONFIRM_BURN===============>",[state.tokenId])
-        return callWithGasPrice(billHelperContract, 'burn', [state.tokenId])
+        return callWithGasPrice(billMinterContract, 'burn', [state.tokenId])
         .catch((err) => console.log("CONFIRM_BURN===============>", err))
-      }
+      } 
       if (stage === LockStage.CONFIRM_UPDATE_CATEGORY) {
-        console.log("CONFIRM_UPDATE_CATEGORY===============>",[pool?.id, state.category])
-        return callWithGasPrice(billHelperContract, 'updateCategory', [pool?.id, state.category])
+        console.log("CONFIRM_UPDATE_CATEGORY===============>",[state.bill, state.category])
+        return callWithGasPrice(billHelperContract, 'updateCategory', [state.bill, state.category])
         .catch((err) => console.log("CONFIRM_UPDATE_CATEGORY===============>", err))
       }
       if (stage === LockStage.CONFIRM_WITHDRAW) {
@@ -781,14 +780,14 @@ const goBack = () => {
         .catch((err) => console.log("CONFIRM_WITHDRAW===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_MINT_INFO) {
-        const args = [pool?.id, state.extraMint, state.tokenId]
+        const args = [state.bill, state.extraMint, state.tokenId]
         console.log("CONFIRM_UPDATE_MINT_INFO===============>",args)
-        return callWithGasPrice(billHelperContract, 'updateMintInfo', args)
+        return callWithGasPrice(billMinterContract, 'updateMintInfo', args)
         .catch((err) => console.log("CONFIRM_UPDATE_MINT_INFO===============>", err))
       }
       if (stage === LockStage.CONFIRM_MINT_EXTRA) {
         console.log("CONFIRM_MINT_EXTRA===============>",[state.tokenId, state.extraMint])
-        return callWithGasPrice(billHelperContract, 'mintExtra', [state.tokenId, state.extraMint])
+        return callWithGasPrice(billMinterContract, 'mintExtra', [state.tokenId, state.extraMint])
         .catch((err) => console.log("CONFIRM_MINT_EXTRA===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_PROTOCOL) {
@@ -837,7 +836,7 @@ const goBack = () => {
         const amountReceivable = getDecimalAmount(state.amountReceivable ?? 0, currency?.decimals)
         const args = [
           state.contractAddress,
-          pool?.id, 
+          state.bill, 
           amountReceivable.toString(), 
           state.tag,
           state.message
@@ -853,7 +852,7 @@ const goBack = () => {
         .catch((err) => console.log("CONFIRM_UPDATE_OWNER===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_URI_GENERATOR) {
-        const args = [pool?.id, state.uriGenerator]
+        const args = [state.bill, state.uriGenerator]
         console.log("CONFIRM_UPDATE_URI_GENERATOR===============>",args)
         return callWithGasPrice(billHelperContract, 'updateUriGenerator', args)
         .catch((err) => console.log("CONFIRM_UPDATE_URI_GENERATOR===============>", err))
@@ -870,8 +869,8 @@ const goBack = () => {
         .catch((err) => console.log("CONFIRM_DELETE_PROTOCOL===============>", err))
       }
       if (stage === LockStage.CONFIRM_DELETE) {
-        console.log("CONFIRM_DELETE===============>",[pool?.id])
-        return callWithGasPrice(billContract, 'deleteBILL', [pool?.id])
+        console.log("CONFIRM_DELETE===============>",[state.bill])
+        return callWithGasPrice(billContract, 'deleteBILL', [state.bill])
         .catch((err) => console.log("CONFIRM_DELETE===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_BOUNTY_ID) {
@@ -881,8 +880,18 @@ const goBack = () => {
       }
       if (stage === LockStage.CONFIRM_CLAIM_NOTE) {
         console.log("CONFIRM_CLAIM_NOTE===============>",[state.tokenId])
-        return callWithGasPrice(billContract, 'claimPendingRevenueFromNote', [state.tokenId])
+        return callWithGasPrice(billNoteContract, 'claimPendingRevenueFromNote', [state.tokenId])
         .catch((err) => console.log("CONFIRM_CLAIM_NOTE===============>", err))
+      }
+      if (stage === LockStage.CONFIRM_VOTE) {
+        const args = [
+          state.bill,
+          state.profileId,
+          !!state.like
+        ]
+        console.log("CONFIRM_VOTE===============>",args)
+        return callWithGasPrice(billHelperContract, 'vote', args)
+        .catch((err) => console.log("CONFIRM_VOTE===============>", err))
       }
     },
     onSuccess: async ({ receipt }) => {

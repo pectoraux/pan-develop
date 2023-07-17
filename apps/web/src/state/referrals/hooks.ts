@@ -62,13 +62,13 @@ export const usePoolsPageFetch = () => {
   const { account } = useWeb3React()
   const dispatch = useAppDispatch()
   useFetchPublicPoolsData()
-  useFastRefreshEffect(() => {
-    batch(() => {
-      if (account) {
-        dispatch(fetchReferralsUserDataAsync({ account }))
-      }
-    })
-  }, [account, dispatch])
+  // useFastRefreshEffect(() => {
+  //   batch(() => {
+  //     if (account) {
+  //       dispatch(fetchReferralsUserDataAsync({ account }))
+  //     }
+  //   })
+  // }, [account, dispatch])
 }
 
 export const useCurrBribe = () => {

@@ -212,6 +212,8 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
     name: pool?.name,
     finalNumbers: '',
     fungible: 0,
+    brackets: '',
+    bettingProfileId: '',
     // owner: currAccount?.owner || account
   }))
 
@@ -530,7 +532,7 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
           state.callsInterval,
         ]
         console.log("CONFIRM_UPDATE_MEMBERSHIP_PARAMETERS===============>", args)
-        return callWithGasPrice(bettingContract, 'updateMembershipParams', args)
+        return callWithGasPrice(bettingHelperContract, 'updateMembershipParams', args)
         .catch((err) => console.log("CONFIRM_UPDATE_MEMBERSHIP_PARAMETERS===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_PARTNER_EVENT) {
@@ -538,6 +540,12 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
         console.log("CONFIRM_UPDATE_PARTNER_EVENT===============>", args)
         return callWithGasPrice(bettingContract, 'updatePartnerEvent', args)
         .catch((err) => console.log("CONFIRM_UPDATE_PARTNER_EVENT===============>", err))
+      }
+      if (stage === LockStage.CONFIRM_CLAIM_TICKETS) {
+        const args = [state.bettingId,state.ticketNumbers?.split(','),state.brackets?.split(',')]
+        console.log("CONFIRM_CLAIM_TICKETS===============>", args)
+        return callWithGasPrice(bettingContract, 'claimTickets', args)
+        .catch((err) => console.log("CONFIRM_CLAIM_TICKETS===============>", err))
       }
       if (stage === LockStage.CONFIRM_BURN_FOR_CREDIT) {
         const amount = !state.fungible ? state.amountReceivable : getDecimalAmount(state.amountReceivable, currency?.decimals)?.toString()
@@ -559,6 +567,12 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
         return callWithGasPrice(bettingMinterContract, 'sponsorTag', args)
         .catch((err) => console.log("CONFIRM_SPONSOR_TAG===============>", err))
       }
+      if (stage === LockStage.CONFIRM_UPDATE_SPONSOR_MEDIA) {
+        console.log("CONFIRM_UPDATE_SPONSOR_MEDIA===============>")
+        const args = [state.bettingProfileId, state.tag]
+        return callWithGasPrice(bettingMinterContract, 'updateSponsorMedia', args)
+        .catch((err) => console.log("CONFIRM_UPDATE_SPONSOR_MEDIA===============>", err))
+      }
       if (stage === LockStage.CONFIRM_INJECT_FUNDS) {
         console.log("CONFIRM_INJECT_FUNDS===============>")
         const amountReceivable = getDecimalAmount(state.amountReceivable ?? 0, currency?.decimals)
@@ -569,13 +583,13 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
       if (stage === LockStage.CONFIRM_UPDATE_EXCLUDED_CONTENT) {
         const args = [state.tag, state.contentType, !!state.add]
         console.log("CONFIRM_UPDATE_EXCLUDED_CONTENT===============>",args)
-        return callWithGasPrice(bettingMinterContract, 'updateExcludedContent', args)
+        return callWithGasPrice(bettingHelperContract, 'updateExcludedContent', args)
         .catch((err) => console.log("CONFIRM_UPDATE_EXCLUDED_CONTENT===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_PRICE_PER_MINUTE) {
         const pricePerMinute = getDecimalAmount(state.pricePerMinute ?? 0, currency?.decimals)
         console.log("CONFIRM_UPDATE_PRICE_PER_MINUTE===============>",[pricePerMinute?.toString()])
-        return callWithGasPrice(bettingMinterContract, 'updatePricePerAttachMinutes', [pricePerMinute?.toString()])
+        return callWithGasPrice(bettingHelperContract, 'updatePricePerAttachMinutes', [pricePerMinute?.toString()])
         .catch((err) => console.log("CONFIRM_UPDATE_PRICE_PER_MINUTE===============>", err))
       }
       if (stage === LockStage.CONFIRM_BURN) {
@@ -596,7 +610,7 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
       }
       if (stage === LockStage.CONFIRM_UPDATE_ADMIN) {
         console.log("CONFIRM_UPDATE_ADMIN===============>", [state.owner, !!state.add])
-        return callWithGasPrice(bettingHelperContract, 'emitUpdateBettingDescription', [state.owner, !!state.add])
+        return callWithGasPrice(bettingContract, 'updateAdmin', [state.owner, !!state.add])
         .catch((err) => console.log("CONFIRM_UPDATE_ADMIN===============>", err))
       }
       if (stage === LockStage.CONFIRM_WITHDRAW) {
@@ -617,9 +631,10 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
         .catch((err) => console.log("CONFIRM_DELETE_PROTOCOL===============>", err))
       }
       if (stage === LockStage.CONFIRM_USER_WITHDRAW) {
-        const args = state.add ? [currency?.address, state.bettingId] : [state.ticketId]
-        console.log("CONFIRM_USER_WITHDRAW===============>", bettingContract, args)
-        return callWithGasPrice(bettingContract, 'userWithdraw', args)
+        const args = state.add ? [currency?.address] : [state.ticketId]
+        const method = state.add ? 'withdrawReferrerFee' : 'userWithdraw'
+        console.log("CONFIRM_USER_WITHDRAW===============>", args)
+        return callWithGasPrice(bettingContract, method, args)
         .catch((err) => console.log("CONFIRM_USER_WITHDRAW===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_BURN_TOKEN_FOR_CREDIT) {
@@ -645,14 +660,14 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
       }
       if (stage === LockStage.CONFIRM_UPDATE_URI_GENERATOR) {
         console.log("CONFIRM_UPDATE_URI_GENERATOR===============>",[state.uriGenerator, bettingContract.address])
-        return callWithGasPrice(bettingMinterContract, 'updateURIGenerator', [state.uriGenerator, bettingContract.address])
+        return callWithGasPrice(bettingHelperContract, 'updateUriGenerator', [state.uriGenerator, bettingContract.address])
         .catch((err) => console.log("CONFIRM_UPDATE_URI_GENERATOR===============>", err))
       }
       if (stage === LockStage.CONFIRM_BUY_TICKETS) {
-        const args = [state.bettingId, account, AddressZero, state.identityTokenId, state.ticketNumbers?.split(',')]
+        const args = [state.bettingId, account, AddressZero, state.identityTokenId, state.period, state.ticketNumbers?.split(',')]
         console.log("CONFIRM_BUY_TICKETS===============>", args)
         return callWithGasPrice(bettingContract, 'buyWithContract', args)
-        .catch((err) => console.log("CONFIRM_BUY_TICKETS===============>", err))
+        .catch((err) => console.log("CONFIRM_BUY_TICKETS===============>", err, bettingContract))
       }
       return null
     },

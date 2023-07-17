@@ -53,6 +53,19 @@ const SetPriceStage: React.FC<any> = ({
     <>
     <GreyedOutContainer>
         <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
+          {t('Sponsor Contract Address')}
+        </Text>
+        <Input
+          type="text"
+          scale="sm"
+          name='contractAddress'
+          value={state.contractAddress}
+          placeholder={t('input sponsor contract address')}
+          onChange={handleChange}
+        />
+    </GreyedOutContainer>
+    <GreyedOutContainer>
+        <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
           {t('Tag Name')}
         </Text>
         <Input

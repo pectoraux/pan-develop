@@ -263,16 +263,16 @@ const config: (
       icon: MoreIcon,
       hideSubNav: true,
       items: [
-        {
-          label: t('Info'),
-          href: '/info',
-        },
-        {
-          label: t('IFO'),
-          href: '/ifo',
-          // supportChainIds: SUPPORT_ONLY_BSC,
-          image: '/images/ifos/ifo-bunny.png',
-        },
+        // {
+        //   label: t('Info'),
+        //   href: '/info',
+        // },
+        // {
+        //   label: t('IFO'),
+        //   href: '/ifo',
+        //   // supportChainIds: SUPPORT_ONLY_BSC,
+        //   image: '/images/ifos/ifo-bunny.png',
+        // },
         {
           label: t('Voting'),
           href: '/voting',

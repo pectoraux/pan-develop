@@ -52,19 +52,6 @@ const SetPriceStage: React.FC<any> = ({
   return (
     <>
     <GreyedOutContainer>
-      <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
-        {t('Ticket ID')}
-      </Text>
-      <Input
-        type="text"
-        scale="sm"
-        name='ticketId'
-        value={state.ticketId}
-        placeholder={t('input ticket size')}
-        onChange={handleChange}
-      />
-    </GreyedOutContainer>
-    <GreyedOutContainer>
         <StyledItemRow>
         <Text fontSize="12px" color="secondary" textTransform="uppercase" paddingTop="13px" paddingRight="50px" bold>
           {t('Are You a Referrer')}
@@ -76,6 +63,20 @@ const SetPriceStage: React.FC<any> = ({
       </StyledItemRow>
       <Divider/>
     </GreyedOutContainer>
+    {state.add ? null :
+    <GreyedOutContainer>
+      <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
+        {t('Ticket ID')}
+      </Text>
+      <Input
+        type="text"
+        scale="sm"
+        name='ticketId'
+        value={state.ticketId}
+        placeholder={t('input ticket size')}
+        onChange={handleChange}
+      />
+    </GreyedOutContainer>}
     <Grid gridTemplateColumns="32px 1fr" p="16px" maxWidth="360px">
       <Flex alignSelf="flex-start">
         <ErrorIcon width={24} height={24} color="textSubtle" />

@@ -68,13 +68,13 @@ export const usePoolsPageFetch = () => {
   const dispatch = useAppDispatch()
   useFetchPublicPoolsData()
 
-  useFastRefreshEffect(() => {
-    batch(() => {
-      if (account) {
-        dispatch(fetchArpsUserDataAsync(account))
-      }
-    })
-  }, [account, dispatch])
+  // useFastRefreshEffect(() => {
+  //   batch(() => {
+  //     if (account) {
+  //       dispatch(fetchArpsUserDataAsync(account))
+  //     }
+  //   })
+  // }, [account, dispatch])
 }
 
 export const useCurrBribe = () => {

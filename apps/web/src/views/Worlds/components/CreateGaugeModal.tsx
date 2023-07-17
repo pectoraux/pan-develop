@@ -79,7 +79,6 @@ const modalTitles = (t: TranslateFunction) => ({
   [LockStage.UPDATE_AUTOCHARGE]: t('Update Autocharge'),
   [LockStage.UPDATE_TAX_CONTRACT]: t('Update Tax Contract'),
   [LockStage.ADMIN_AUTOCHARGE]: t('Autocharge'),
-  [LockStage.COSIGNS]: t('Cosigns'),
   [LockStage.DELETE]: t('Delete'),
   [LockStage.UPDATE_DISCOUNT_DIVISOR]: t('Update Discount Divisor'),
   [LockStage.UPDATE_PENALTY_DIVISOR]: t('Update Penalty Divisor'),
@@ -675,12 +674,13 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
       }
       if (stage === LockStage.CONFIRM_TRANSFER_RECEIVABLE_TO_NOTE) {
         const args = [pool?.worldAddress,state.toAddress,state.tokenId,state.numPeriods]
-        return callWithGasPrice(worldNoteContract, 'transferDueToNoteReceivable', args)
+        console.log("CONFIRM_TRANSFER_RECEIVABLE_TO_NOTE==============>", args)
+        return callWithGasPrice(worldHelper3Contract, 'transferDueToNoteReceivable', args)
         .catch((err) => console.log("CONFIRM_TRANSFER_RECEIVABLE_TO_NOTE===============>", err))
       }
       if (stage === LockStage.CONFIRM_CLAIM_NOTE) {
         const args = [state.tokenId]
-        return callWithGasPrice(worldNoteContract, 'claimPendingRevenueFromNote', args)
+        return callWithGasPrice(worldHelper3Contract, 'claimPendingRevenueFromNote', args)
         .catch((err) => console.log("CONFIRM_CLAIM_NOTE===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_TAG_REGISTRATION) {
@@ -706,6 +706,7 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
       }
       if (stage === LockStage.CONFIRM_CLAIM_TOKEN_SPONSOR_FUND) {
         const args = [state.tokenId]
+        console.log("CONFIRM_CLAIM_TOKEN_SPONSOR_FUND===============>", args)
         return callWithGasPrice(worldHelperContract, 'claimPendingRevenueFromTokenId', args)
         .catch((err) => console.log("CONFIRM_CLAIM_TOKEN_SPONSOR_FUND===============>", err))
       }
@@ -771,6 +772,7 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
       }
       if (stage === LockStage.CONFIRM_UPDATE_URI_GENERATOR) {
         const args = [state.world,state.uriGenerator]
+        console.log("CONFIRM_UPDATE_URI_GENERATOR===============>", args)
         return callWithGasPrice(worldHelper2Contract, 'updateUriGenerator', args)
         .catch((err) => console.log("CONFIRM_UPDATE_URI_GENERATOR===============>", err))
       }
@@ -782,15 +784,17 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
         return callWithGasPrice(worldContract, 'updateBounty', [state.bountyId])
           .catch((err) => console.log("CONFIRM_UPDATE_BOUNTY===============>", err))
       }
-      if (stage === LockStage.CONFIRM_UPDATE_OWNER) {
-        return callWithGasPrice(worldContract, 'updateOwner', [account, state.tokenId])
-        .catch((err) => console.log("CONFIRM_UPDATE_OWNER===============>", err))
-      }
-      if (stage === LockStage.CONFIRM_UPDATE_TOKEN_ID) {
-        return callWithGasPrice(worldContract, 'updateTokenId', [state.tokenId])
-        .catch((err) => console.log("CONFIRM_UPDATE_TOKEN_ID===============>", err))
-      }
+      // if (stage === LockStage.CONFIRM_UPDATE_OWNER) {
+      //   console.log("CONFIRM_UPDATE_OWNER===============>", [account, state.tokenId])
+      //   return callWithGasPrice(worldContract, 'updateOwner', [account, state.tokenId])
+      //   .catch((err) => console.log("CONFIRM_UPDATE_OWNER===============>", err))
+      // }
+      // if (stage === LockStage.CONFIRM_UPDATE_TOKEN_ID) {
+      //   return callWithGasPrice(worldContract, 'updateTokenId', [state.tokenId])
+      //   .catch((err) => console.log("CONFIRM_UPDATE_TOKEN_ID===============>", err))
+      // }
       if (stage === LockStage.CONFIRM_UPDATE_AUTOCHARGE) {
+        console.log("CONFIRM_UPDATE_AUTOCHARGE===============>", [!!state.autoCharge, state.tokenId])
         return callWithGasPrice(worldContract, 'updateAutoCharge', [!!state.autoCharge, state.tokenId])
         .catch((err) => console.log("CONFIRM_UPDATE_AUTOCHARGE===============>", err))
       }
@@ -851,15 +855,15 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
           <Button mb="8px" onClick={()=> setStage(LockStage.UPDATE_TOKEN_IDS) }>
             {t('UPDATE TOKEN IDS')}
           </Button>
-          <Button mb="8px" variant='secondary' onClick={()=> setStage(LockStage.UPDATE_OWNER) }>
+          {/* <Button mb="8px" variant='secondary' onClick={()=> setStage(LockStage.UPDATE_OWNER) }>
             {t('UPDATE OWNER')}
-          </Button>
+          </Button> */}
           <Button mb="8px" variant='secondary' onClick={()=> setStage(LockStage.UPDATE_BOUNTY) }>
             {t('UPDATE BOUNTY')}
           </Button>
-          <Button mb="8px" variant='secondary' onClick={()=> setStage(LockStage.UPDATE_TOKEN_ID) }>
+          {/* <Button mb="8px" variant='secondary' onClick={()=> setStage(LockStage.UPDATE_TOKEN_ID) }>
             {t('UPDATE TOKEN ID')}
-          </Button>
+          </Button> */}
           <Button mb="8px" variant='light' onClick={()=> setStage(LockStage.UPDATE_SPONSOR_MEDIA) }>
             {t('UPDATE SPONSOR MEDIA')}
           </Button>
@@ -971,6 +975,7 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, c
       {stage === LockStage.UPDATE_AUTOCHARGE && 
       <UpdateAutoChargeStage
         state={state} 
+        handleChange={handleChange}
         handleRawValueChange={handleRawValueChange}
         continueToNextStage={continueToNextStage} 
       />}

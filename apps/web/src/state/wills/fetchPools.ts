@@ -253,11 +253,14 @@ export const fetchWill = async (willAddress) => {
 export const fetchWills = async ({ fromWill }) => {
   const willHelperContract = getWillNoteContract()
   const willAddresses = await willHelperContract.getAllWills(0)
+  console.log("1fetchWills==================>", willAddresses)
   const wills =  await Promise.all(
     willAddresses.filter((willAddress) =>
       fromWill ? willAddress?.toLowerCase() === fromWill?.toLowerCase() : true)
       .map(async (willAddress, index) => {
+        console.log("2fetchWills==================>2")
         const data = await fetchWill(willAddress)
+        console.log("3fetchWills==================>", data)
         return {
           sousId: index,
           ...data

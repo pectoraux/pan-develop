@@ -13,7 +13,6 @@ const NftProfilePage = () => {
   const { account } = useWeb3React()
   const accountAddress = useRouter().query.accountAddress as string
   const isConnectedProfile = account?.toLowerCase() === accountAddress?.toLowerCase()
-  console.log("isConnectedProfile================>", isConnectedProfile)
   const {
     profile,
     isValidating: isProfileFetching,
@@ -28,6 +27,7 @@ const NftProfilePage = () => {
     isLoading: isNftLoading,
     refresh: refreshUserNfts,
   } = useNftsForAddress(accountAddress, profile, isProfileFetching)
+  console.log("isConnectedProfile================>", isConnectedProfile, profile)
   // nfts = [
   //   {
   //     tokenId: "Uber",

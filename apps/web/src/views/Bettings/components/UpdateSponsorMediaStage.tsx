@@ -30,14 +30,14 @@ const SetPriceStage: React.FC<any> = ({
     <>
     <GreyedOutContainer>
       <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
-        {t('Game Profile ID')}
+        {t('Betting Profile ID')}
       </Text>
       <Input
         type="text"
         scale="sm"
-        name='gameProfileId'
-        value={state.gameProfileId}
-        placeholder={t('input your game profile id')}
+        name='bettingProfileId'
+        value={state.bettingProfileId}
+        placeholder={t('input your betting profile id')}
         onChange={handleChange}
       />
     </GreyedOutContainer>

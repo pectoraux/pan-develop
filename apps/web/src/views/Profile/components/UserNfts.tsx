@@ -71,7 +71,7 @@ const UserNfts: React.FC<any> = ({ nfts, isLoading, onSuccessSale, onSuccessEdit
   return (
     <>
       {/* User has no NFTs */}
-      {nfts.length === 0 && !isLoading ? (
+      {nfts?.length === 0 && !isLoading ? (
         <Flex p="24px" flexDirection="column" alignItems="center">
           <NoNftsImage />
           <Text pt="8px" bold>
@@ -79,7 +79,7 @@ const UserNfts: React.FC<any> = ({ nfts, isLoading, onSuccessSale, onSuccessEdit
           </Text>
         </Flex>
       ) : // User has NFTs and data has been fetched
-      nfts.length > 0 ? (
+      nfts?.length > 0 ? (
         <Grid
           // gridGap="6px"
           gridTemplateColumns={['1fr', 'repeat(2, 1fr)', 'repeat(3, 1fr)']}

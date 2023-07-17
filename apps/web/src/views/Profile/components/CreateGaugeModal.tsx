@@ -11,7 +11,8 @@ import { useTranslation, TranslateFunction, ContextApi } from '@pancakeswap/loca
 import { getVeFromWorkspace } from 'utils/addressHelpers'
 import { 
   useERC20, 
-  useProfileContract,  
+  useProfileContract,
+  useProfileHelperContract,
 } from 'hooks/useContract'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
 import useApproveConfirmTransaction from 'hooks/useApproveConfirmTransaction'
@@ -51,7 +52,6 @@ const modalTitles = (t: TranslateFunction) => ({
   [LockStage.UPDATE_BOUNTY]: t('Update Bounty'),
   [LockStage.DELETE]: t('Delete'),
   [LockStage.UPDATE_BADGE_ID]: t('Update Badge ID'),
-  [LockStage.UPDATE_BOUNTY]: t('Update Bounty'),
   [LockStage.UPDATE_BLACKLIST]: t('Update Blacklist'),
   [LockStage.BROADCAST]: t('Broadcast'),
   [LockStage.CLAIM_REVENUE]: t('Withdraw'),
@@ -113,12 +113,14 @@ const BuyModal: React.FC<any> = ({ variant="user", pool, currency, profile, onSu
   const { callWithGasPrice } = useCallWithGasPrice()
   const { toastSuccess } = useToast()
   const profileContract = useProfileContract()
+  const profileHelperContract = useProfileHelperContract()
   const tokenContract = useERC20(currency?.address || '')
   const [nftFilters, setNftFilters] = useState<any>({})
 
 
   const [state, setState] = useState(() => ({
     profileId: pool?.id ?? '',
+    protocolId: '',
     tokenId: '',
     identityTokenId: '0',
     amountReceivable: '0',
@@ -320,8 +322,8 @@ const BuyModal: React.FC<any> = ({ variant="user", pool, currency, profile, onSu
         .catch((err) => console.log("CONFIRM_CREATE==================>", err))
       }
       if (stage === LockStage.CONFIRM_FOLLOW) {
-        console.log("CONFIRM_FOLLOW================>", [state.profileId || pool?.id, state.identityTokenId])
-        return callWithGasPrice(profileContract, 'follow', [state.profileId || pool?.id, state.identityTokenId])
+        console.log("CONFIRM_FOLLOW================>", [state.profileId])
+        return callWithGasPrice(profileContract, 'follow', [state.profileId])
         .catch((err) => console.log("CONFIRM_FOLLOW==================>", err))
       }
       if (stage === LockStage.CONFIRM_PAY) {
@@ -332,8 +334,9 @@ const BuyModal: React.FC<any> = ({ variant="user", pool, currency, profile, onSu
       }
       if (stage === LockStage.CONFIRM_UPDATE_LATE_DAYS) {
       const ve = getVeFromWorkspace(nftFilters?.workspace?.value?.toLowerCase())
-      console.log("CONFIRM_UPDATE_LATE_DAYS==================>",[state.helper, state.arp, state.owner, ve, state.tokenId, state.profileId])
-        return callWithGasPrice(profileContract, 'updateLateDays', [state.helper, state.arp, state.owner, ve, state.tokenId, state.profileId])
+      const args = [state.helper, state.arp, state.owner, ve, state.tokenId, state.protocolId, state.profileId]
+      console.log("CONFIRM_UPDATE_LATE_DAYS==================>", args)
+        return callWithGasPrice(profileContract, 'updateLateDays', args)
         .catch((err) => console.log("CONFIRM_UPDATE_LATE_DAYS==================>", err))
       }
       if (stage === LockStage.CONFIRM_UNFOLLOW) {
@@ -342,8 +345,8 @@ const BuyModal: React.FC<any> = ({ variant="user", pool, currency, profile, onSu
         .catch((err) => console.log("CONFIRM_UNFOLLOW==================>", err))
       }
       if (stage === LockStage.CONFIRM_ADD_ACCOUNT || stage === LockStage.CONFIRM_ADD_ACCOUNT2) {
-        console.log("CONFIRM_ADD_ACCOUNT==================>",[pool?.profileId || profile?.id, state.owner])
-        return callWithGasPrice(profileContract, 'addAccount', [pool?.profileId || profile?.id, state.owner])
+        console.log("CONFIRM_ADD_ACCOUNT==================>",[pool?.profileId || profile?.id || state.profileId, state.owner])
+        return callWithGasPrice(profileContract, 'addAccount', [pool?.profileId || profile?.id || state.profileId, state.owner])
         .catch((err) => console.log("CONFIRM_ADD_ACCOUNT==================>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_BOUNTY) {
@@ -352,8 +355,8 @@ const BuyModal: React.FC<any> = ({ variant="user", pool, currency, profile, onSu
         .catch((err) => console.log("CONFIRM_UPDATE_BOUNTY==================>", err))
       }
       if (stage === LockStage.CONFIRM_ADD_ACCOUNT_FROM_PROOF) {
-        console.log("CONFIRM_ADD_ACCOUNT_FROM_PROOF==================>", [pool?.profileId, state.identityTokenId])
-        return callWithGasPrice(profileContract, 'addAccountFromProof', [pool?.profileId, state.identityTokenId])
+        console.log("CONFIRM_ADD_ACCOUNT_FROM_PROOF==================>", [pool?.profileId || state.profileId, state.identityTokenId])
+        return callWithGasPrice(profileContract, 'addAccountFromProof', [pool?.profileId || state.profileId, state.identityTokenId])
         .then(() => onSuccess())
         .catch((err) => console.log("CONFIRM_ADD_ACCOUNT_FROM_PROOF==================>", err))
       }
@@ -367,8 +370,7 @@ const BuyModal: React.FC<any> = ({ variant="user", pool, currency, profile, onSu
         .catch((err) => console.log("CONFIRM_DELETE==================>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_SSID) {
-        console.log("CONFIRM_UPDATE_SSID==================>", [pool?.profileId])
-        return callWithGasPrice(profileContract, 'updateSSID', [pool?.profileId])
+        return callWithGasPrice(profileContract, 'updateSSID', [])
         .catch((err) => console.log("CONFIRM_UPDATE_SSID==================>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_BADGE_ID) {
@@ -382,19 +384,19 @@ const BuyModal: React.FC<any> = ({ variant="user", pool, currency, profile, onSu
         .catch((err) => console.log("CONFIRM_UPDATE_BLACKLIST==================>", err))
       }
       if (stage === LockStage.CONFIRM_BROADCAST) {
-        console.log("CONFIRM_BROADCAST==================>", [state.message, pool?.profileId])
-        return callWithGasPrice(profileContract, 'updateBroadcast', [state.message, pool?.profileId])
+        console.log("CONFIRM_BROADCAST==================>", [state.message, pool?.profileId || state.profileId])
+        return callWithGasPrice(profileHelperContract, 'updateBroadcast', [state.message, pool?.profileId || state.profileId])
         .catch((err) => console.log("CONFIRM_BROADCAST==================>", err))
       }
       if (stage === LockStage.CONFIRM_CLAIM_REVENUE) {
         const amount = getDecimalAmount(new BigNumber(state.amountPayable ?? 0), currency?.decimals)
-        console.log("CONFIRM_CLAIM_REVENUE==================>", [currency?.address, pool?.profileId, amount?.toString()])
-        return callWithGasPrice(profileContract, 'claimRevenue', [currency?.address, pool?.profileId, amount?.toString()])
+        console.log("CONFIRM_CLAIM_REVENUE==================>", [currency?.address, pool?.profileId || state.profileId, amount?.toString()])
+        return callWithGasPrice(profileContract, 'claimRevenue', [currency?.address, pool?.profileId || state.profileId, amount?.toString()])
         .catch((err) => console.log("CONFIRM_CLAIM_REVENUE==================>", err))
       }
       if (stage === LockStage.CONFIRM_REMOVE_ACCOUNT) {
-        console.log("CONFIRM_REMOVE_ACCOUNT==================>", [pool?.profileId, state.owner, !!state.add])
-        return callWithGasPrice(profileContract, 'removeAccount', [pool?.profileId, state.owner, !!state.add])
+        console.log("CONFIRM_REMOVE_ACCOUNT==================>", [pool?.profileId || state.profileId, state.owner])
+        return callWithGasPrice(profileContract, 'removeAccount', [pool?.profileId || state.profileId, state.owner])
         .catch((err) => console.log("CONFIRM_REMOVE_ACCOUNT==================>", err))
       }
     },
@@ -438,14 +440,14 @@ const BuyModal: React.FC<any> = ({ variant="user", pool, currency, profile, onSu
           <Button mb="8px" variant='success' onClick={()=> setStage(LockStage.ADD_ACCOUNT) }>
             {t('ADD ACCOUNT')}
           </Button>
-          <Button mb="8px" variant='success' onClick={()=> setStage(LockStage.ADD_ACCOUNT_FROM_PROOF) }>
+          {/* <Button mb="8px" variant='success' onClick={()=> setStage(LockStage.ADD_ACCOUNT_FROM_PROOF) }>
             {t('ADD ACCOUNT FROM PROOF')}
-          </Button>
+          </Button> */}
           <Button mb="8px" onClick={()=> setStage(LockStage.UPDATE_COLLECTION_ID) }>
             {t('UPDATE COLLECTION ID')}
           </Button>
           <Button mb="8px" onClick={()=> setStage(LockStage.CONFIRM_UPDATE_SSID) }>
-            {t('UPDATE SSI ID')}
+            {t('UPDATE SSID')}
           </Button>
           <Button mb="8px" variant='secondary' onClick={()=> setStage(LockStage.UPDATE_BOUNTY) }>
             {t('UPDATE BOUNTY')}

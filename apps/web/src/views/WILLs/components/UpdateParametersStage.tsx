@@ -32,27 +32,68 @@ const SetPriceStage: React.FC<any> = ({
     <>
       <GreyedOutContainer>
         <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
-          {t('Name')}
+          {t('Profile ID')}
         </Text>
         <Input
           type="text"
           scale="sm"
-          name='name'
-          value={state.name}
-          placeholder={t('input new pool name')}
+          name='profileId'
+          value={state.profileId}
+          placeholder={t('input profile id')}
           onChange={handleChange}
         />
       </GreyedOutContainer>
       <GreyedOutContainer>
-      <StyledItemRow>
-          <Text fontSize="12px" color="secondary" textTransform="uppercase" paddingTop="3px" paddingRight="50px" bold>
-            {t('Bounty Required')}
-          </Text>
-          <ButtonMenu scale="xs" variant='subtle' activeIndex={state.bountyRequired ? 1 : 0} onItemClick={handleRawValueChange('bountyRequired')}>
-            <ButtonMenuItem >{t("No")}</ButtonMenuItem>
-            <ButtonMenuItem >{t("Yes")}</ButtonMenuItem>
-          </ButtonMenu> 
-        </StyledItemRow>
+        <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
+          {t('Update Period')}
+        </Text>
+        <Input
+          type="text"
+          scale="sm"
+          name='updatePeriod'
+          value={state.updatePeriod}
+          placeholder={t('input update period')}
+          onChange={handleChange}
+        />
+      </GreyedOutContainer>
+      <GreyedOutContainer>
+        <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
+          {t('Minimum Withdrawable Now')}
+        </Text>
+        <Input
+          type="text"
+          scale="sm"
+          name='minWithdrawableNow'
+          value={state.minWithdrawableNow}
+          placeholder={t('input min withdrawable now')}
+          onChange={handleChange}
+        />
+      </GreyedOutContainer>
+      <GreyedOutContainer>
+        <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
+          {t('Minimum NFT Withdrawable Now')}
+        </Text>
+        <Input
+          type="text"
+          scale="sm"
+          name='minNFTWithdrawableNow'
+          value={state.minNFTWithdrawableNow}
+          placeholder={t('input min nft withdrawable now')}
+          onChange={handleChange}
+        />
+      </GreyedOutContainer>
+      <GreyedOutContainer>
+        <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
+          {t('Will Withdrawal Period')}
+        </Text>
+        <Input
+          type="text"
+          scale="sm"
+          name='willWithdrawalPeriod'
+          value={state.willWithdrawalPeriod}
+          placeholder={t('input will withdrawal period')}
+          onChange={handleChange}
+        />
       </GreyedOutContainer>
       <Grid gridTemplateColumns="32px 1fr" p="16px" maxWidth="360px">
       <Flex alignSelf="flex-start">
@@ -60,7 +101,7 @@ const SetPriceStage: React.FC<any> = ({
       </Flex>
       <Box>
         <Text small color="textSubtle">
-          {t('The will update parameters of the pool. Please read the documentation for more information on each parameter')}
+          {t('The will update parameters of the will. Please read the documentation for more information on each parameter')}
         </Text>
       </Box>
     </Grid>

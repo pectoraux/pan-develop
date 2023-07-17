@@ -319,6 +319,9 @@ export const getLotteryAddress = (chainId?: number) => {
 export const getRandomNumberGeneratorAddress = (chainId?: number) => {
   return getAddress(addresses.randomNumberGenerator, chainId)
 }
+export const getLotteryRandomNumberGeneratorAddress = (chainId?: number) => {
+  return getAddress(addresses.lotteryRandomNumberGenerator, chainId)
+}
 export const getLotteryHelperAddress = (chainId?: number) => {
   return getAddress(addresses.lotteryHelper, chainId)
 }
@@ -352,6 +355,10 @@ export const getStakeMarketAddress = (chainId?: number) => {
 
 export const getStakeMarketNoteAddress = (chainId?: number) => {
   return getAddress(addresses.stakemarketNote, chainId)
+}
+
+export const getStakeMarketHeperAddress = (chainId?: number) => {
+  return getAddress(addresses.stakemarketHelper, chainId)
 }
 
 export const getStakeMarketVoterAddress = (chainId?: number) => {
