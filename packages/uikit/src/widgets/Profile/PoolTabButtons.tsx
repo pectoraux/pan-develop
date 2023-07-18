@@ -117,7 +117,7 @@ const PoolTabButtons = ({
 
   return (
     <ViewControls>
-      {viewModeToggle}
+      {/* {viewModeToggle} */}
       {mineOnlySwitch}
       {followersOnlySwitch}
       {followingOnlySwitch}

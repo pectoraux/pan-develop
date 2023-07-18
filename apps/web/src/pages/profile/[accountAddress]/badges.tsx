@@ -6,6 +6,7 @@ import SubMenu from 'views/Profile/components/SubMenu'
 import UnconnectedProfileNfts from 'views/Profile/components/UnconnectedProfileNfts'
 import UserNfts from 'views/Profile/components/UserNfts'
 import { useNftsForAddress } from 'views/Nft/market/hooks/useNftsForAddress'
+import { useGetProtocols } from 'state/auditors/hooks'
 
 const NftProfilePage = () => {
   const { account } = useWeb3React()
@@ -25,6 +26,8 @@ const NftProfilePage = () => {
     isLoading: isNftLoading,
     refresh: refreshUserNfts,
   } = useNftsForAddress(accountAddress, profile, isProfileFetching)
+  const protocols = useGetProtocols(account?.toLowerCase())
+
   // nfts = [
   //   {
   //     tokenId: "Uber",
@@ -63,12 +66,17 @@ const NftProfilePage = () => {
   //     }
   //   },
   // ]
+  let tokens = [];
+  protocols?.data?.length && protocols?.data?.map((pt) => {
+    const rt = pt?.tokens?.length && pt?.tokens?.map((tk) => tk.metadataUrl)
+    return tokens.push(...rt)
+  })
   return (
     <>
       <SubMenu />
       {isConnectedProfile ? (
         <UserNfts
-          nfts={nfts}
+          nfts={tokens}
           isLoading={isNftLoading}
           onSuccessSale={refreshUserNfts}
           onSuccessEditProfile={async () => {

@@ -225,6 +225,27 @@ export const getCollectionSg = async (collectionAddress: string): Promise<any> =
   }
 }
 
+export const getTransactionsSg = async (userAddress: string): Promise<any> => {
+  try {
+    const res = await request(
+      GRAPH_API_CANCAN,
+      gql`
+        query getTransactionsData($userAddress: String!) {
+          transactions(where: { buyer: $userAddress }) {
+            metadataUrl
+          }
+        }
+      `,
+      { userAddress },
+    )
+    console.log("res.transactions=======================>", res.transactions, userAddress)
+    return res.transactions
+  } catch (error) {
+    console.error('Failed to fetch userAddress==========>', error,  userAddress)
+    return {}
+  }
+}
+
 export const getPaywallSg = async (collectionAddress: string): Promise<CollectionMarketDataBaseFields> => {
   try {
     const res = await request(

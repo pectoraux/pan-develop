@@ -15,7 +15,8 @@ import { getProfile } from 'state/profile/helpers'
 import { ApiCollections, NftToken, Collection, NftAttribute, MarketEvent } from './types'
 import { 
   getCollection, 
-  getCollections, 
+  getCollections,
+  getTransactionsSg, 
   getCollectionContracts, 
   getPaymentCredits, 
   getSubscriptionStatus, 
@@ -34,6 +35,12 @@ export const useGetCollections = () => {
   const { data, status } = useSWR(['cancan', 'collections'], async () => getCollections())
   const collections = data ?? ({} as ApiCollections)
   return { data: collections, status }
+}
+
+export const useGetTransactions = (userAddress) => {
+  const { data, status } = useSWR(['cancan', 'transactions2'], async () => getTransactionsSg(userAddress))
+  const transactions = data ?? ({} as any)
+  return { data: transactions, status }
 }
 
 export const useGetProfileId = (account: string) => {

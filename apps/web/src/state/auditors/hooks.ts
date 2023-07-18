@@ -7,6 +7,7 @@ import { useAppDispatch } from 'state'
 import { useSlowRefreshEffect } from 'hooks/useRefreshEffect'
 import { Pool } from '@pancakeswap/uikit'
 import { Token } from '@pancakeswap/sdk'
+import useSWR from 'swr'
 import {
   fetchAuditorsAsync,
   fetchAuditorSgAsync,
@@ -17,6 +18,13 @@ import {
   poolsWithFilterSelector,
   makePoolWithUserDataLoadingSelector,
 } from './selectors'
+import { getProtocolsSg } from './fetchPools'
+
+export const useGetProtocols = (userAddress) => {
+  const { data, status } = useSWR(['auditors', 'protocols2'], async () => getProtocolsSg(userAddress))
+  const protocols = data ?? ({} as any)
+  return { data: protocols, status }
+}
 
 export const useFetchPublicPoolsStats = () => {
   const [data, setData] = useState(null)

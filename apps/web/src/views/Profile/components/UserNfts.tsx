@@ -71,7 +71,7 @@ const UserNfts: React.FC<any> = ({ nfts, isLoading, onSuccessSale, onSuccessEdit
   return (
     <>
       {/* User has no NFTs */}
-      {nfts?.length === 0 && !isLoading ? (
+      {nfts?.length === 0 ? (
         <Flex p="24px" flexDirection="column" alignItems="center">
           <NoNftsImage />
           <Text pt="8px" bold>

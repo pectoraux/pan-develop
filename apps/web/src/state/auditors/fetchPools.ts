@@ -21,6 +21,29 @@ export const fetchSessionInfo = async (sessionId) => {
   return (await firestore.collection("onramp").doc(sessionId).get()).data()
 }
 
+export const getProtocolsSg = async (userAddress: string): Promise<any> => {
+  try {
+    const res = await request(
+      GRAPH_API_AUDITORS,
+      gql`
+        query getProtocolsData($userAddress: String!) {
+          protocols(where: { owner: $userAddress }) {
+            tokens {
+              metadataUrl
+            }
+          }
+        }
+      `,
+      { userAddress },
+    )
+    console.log("res.protocols=======================>", res.protocols, userAddress)
+    return res.protocols
+  } catch (error) {
+    console.error('Failed to fetch userAddress==========>', error,  userAddress)
+    return {}
+  }
+}
+
 export const getProtocols = async (first = 5, skip = 0, where={}) => {
   try {
     const res = await request(

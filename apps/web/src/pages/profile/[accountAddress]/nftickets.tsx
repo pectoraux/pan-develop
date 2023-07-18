@@ -6,6 +6,7 @@ import SubMenu from 'views/Profile/components/SubMenu'
 import UnconnectedProfileNfts from 'views/Profile/components/UnconnectedProfileNfts'
 import UserNfts from 'views/Profile/components/UserNfts'
 import { useNftsForAddress } from 'views/Nft/market/hooks/useNftsForAddress'
+import { useGetTransactions } from 'state/cancan/hooks'
 
 const NftProfilePage = () => {
   const { account } = useWeb3React()
@@ -25,6 +26,7 @@ const NftProfilePage = () => {
     isLoading: isNftLoading,
     refresh: refreshUserNfts,
   } = useNftsForAddress(accountAddress, profile, isProfileFetching)
+  const transactions = useGetTransactions(account?.toLowerCase())
   // nfts = [
   //   {
   //     tokenId: "Uber",
@@ -68,7 +70,7 @@ const NftProfilePage = () => {
       <SubMenu />
       {isConnectedProfile ? (
         <UserNfts
-          nfts={nfts}
+          nfts={transactions?.data?.length && transactions?.data?.map((tx) => tx.metadataUrl)}
           isLoading={isNftLoading}
           onSuccessSale={refreshUserNfts}
           onSuccessEditProfile={async () => {
