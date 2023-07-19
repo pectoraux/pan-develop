@@ -22,6 +22,10 @@ export default {
     56: '0xDf4dBf6536201370F95e06A0F8a7a70fE40E388a',
     97: '0x4B683C7E13B6d5D7fd1FeA9530F451954c1A7c8A',
   },
+  card: {
+    56: '',
+    97: '0xd0628710a7f313f12307b548F5d629f4Ba16bE30',
+  },
   profile: {
     56: '',
     97: '0x6a1675e15290e9e53f3dBCA4E7Eb8f123aCc0c25',

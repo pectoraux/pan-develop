@@ -37,6 +37,7 @@ export const GRAPH_API_STAKES = 'https://api.thegraph.com/subgraphs/name/pectora
 export const GRAPH_API_VALUEPOOLS = 'https://api.thegraph.com/subgraphs/name/pectoraux/valuepools'
 export const GRAPH_API_VP_VOTER = 'https://api.thegraph.com/subgraphs/name/pectoraux/valuepoolvoter'
 export const GRAPH_API_AUDITORS = 'https://api.thegraph.com/subgraphs/name/pectoraux/auditors'
+export const GRAPH_API_CARDS = 'https://api.thegraph.com/subgraphs/name/pectoraux/cards'
 export const GRAPH_API_ARPS = 'https://api.thegraph.com/subgraphs/name/pectoraux/arp'
 export const GRAPH_API_LOTTERIES = 'https://api.thegraph.com/subgraphs/name/pectoraux/lotteries'
 export const GRAPH_API_BILLS = 'https://api.thegraph.com/subgraphs/name/pectoraux/bills'

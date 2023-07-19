@@ -16,6 +16,7 @@ export * as Pool from "./widgets/Pool";
 export * as ValuePool from "./widgets/ValuePool";
 export * as Ramp from "./widgets/Ramp";
 export * as Ramps from "./widgets/Ramps";
+export * as Cards from "./widgets/Cards";
 export * as Bettings from "./widgets/Bettings";
 export * as Profile from "./widgets/Profile";
 export * as Vesting from "./widgets/Vesting";

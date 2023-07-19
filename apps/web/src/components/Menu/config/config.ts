@@ -141,6 +141,14 @@ const config: (
           href: '/bills',
         },
         {
+          label: t('PayCards'),
+          href: '/cards',
+        },
+        {
+          label: t('Future Collateral'),
+          href: '/futureCollateral',
+        },
+        {
           label: t('Pools'),
           href: '/pools',
           supportChainIds: SUPPORT_ONLY_BSC,

@@ -16,6 +16,9 @@ export const getPoolGaugeAddress = (chainId?: number) => {
 export const getFeeToAddress = (chainId?: number) => {
   return getAddress(addresses.feeTo, chainId)
 }
+export const getCardAddress = (chainId?: number) => {
+  return getAddress(addresses.card, chainId)
+}
 export const getVeFromWorkspace = (wk: string) => {
   return getAddress(addresses[wk])
 }

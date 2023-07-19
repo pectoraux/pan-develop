@@ -124,9 +124,11 @@ import {
   getWorldHelperAddress,
   getWorldHelper2Address,
   getWorldHelper3Address,
+  getCardAddress,
 } from 'utils/addressHelpers'
 
 // ABI
+import cardABI from 'config/abi/card.json'
 import profileABI from 'config/abi/profile.json'
 import profileHelperABI from 'config/abi/profileHelper.json'
 import poolGaugeAbi from 'config/abi/poolGauge.json'
@@ -422,6 +424,7 @@ import type {
   BettingMinter,
   RandomNumberGenerator,
   LotteryRandomNumberGenerator,
+  Card,
 } from 'config/abi/types'
 import { ChainId } from '@pancakeswap/sdk'
 
@@ -825,6 +828,14 @@ export const getAuditorContract = (auditorContractAddress: string, signer?: Sign
     address: auditorContractAddress, 
     signer
   }) as Auditor
+}
+
+export const getCardContract = (signer?: Signer | Provider) => {
+  return getContract({
+    abi: cardABI, 
+    address: getCardAddress(), 
+    signer
+  }) as Card
 }
 
 export const getWillContract = (willContractAddress: string, signer?: Signer | Provider) => {

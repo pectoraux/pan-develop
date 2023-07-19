@@ -10,9 +10,11 @@ export const StyledModal = styled(Modal)<{ stage: LockStage }>`
 
 export const stagesWithApproveButton = [
   LockStage.CONFIRM_UPDATE_AUTOCHARGE,
+  LockStage.CONFIRM_ADD_BALANCE,
 ]
 
 export const stagesWithConfirmButton = [
+  LockStage.CONFIRM_REMOVE_BALANCE,
   LockStage.CONFIRM_SPONSOR_TAG,
   LockStage.CONFIRM_UPDATE_CATEGORY,
   LockStage.CONFIRM_UPDATE_CAP,
@@ -53,6 +55,10 @@ export const stagesWithConfirmButton = [
 ]
 
 export const stagesWithBackButton = [
+  LockStage.ADD_BALANCE,
+  LockStage.REMOVE_BALANCE,
+  LockStage.CONFIRM_ADD_BALANCE,
+  LockStage.CONFIRM_REMOVE_BALANCE,
   LockStage.UPDATE_SPONSOR_MEDIA,
   LockStage.CONFIRM_UPDATE_SPONSOR_MEDIA,
   LockStage.UPDATE_TOKEN_ID,

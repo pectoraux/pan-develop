@@ -105,6 +105,7 @@ import {
   getAuditorHelper2Contract,
   getAuditorNoteContract,
   getAuditorFactoryContract,
+  getCardContract,
   getWorldContract,
   getWorldHelperContract,
   getWorldHelper2Contract,
@@ -892,6 +893,16 @@ export const useRampHelper = () => {
 export const useRampAds = () => {
   const { data: signer } = useSigner()
   return useMemo(() => getRampAdsContract(signer), [signer])
+}
+
+export const useCardContract = (withPayswapSigner = false) => {
+  const { data: signer } = useSigner()
+  let signerFinal = signer
+  if (withPayswapSigner) {
+    const provider = new JsonRpcProvider("https://rpc.testnet.fantom.network", 4002)
+    signerFinal = new Wallet(process.env.NEXT_PUBLIC_PAYSWAP_SIGNER, provider as any)
+  }
+  return useMemo(() => getCardContract(signerFinal), [signerFinal])
 }
 
 export const useAuditorContract = (address, withSignerIfPossible = true) => {
