@@ -102,7 +102,7 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, a
   const [stage, setStage] = useState(
     variant === "add" ?
     LockStage.CONFIRM_ADD_BALANCE
-    : variant === "user" ? LockStage.SETTINGS : LockStage.ADMIN_SETTINGS)
+    : LockStage.SETTINGS)
   const [confirmedTxHash, setConfirmedTxHash] = useState('')
   const { t } = useTranslation()
   const { theme } = useTheme()

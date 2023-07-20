@@ -31,9 +31,8 @@ import stakemarketReducer from './stakemarket'
 import trustbountiesReducer from './trustbounties'
 import arpsReducer from './arps'
 import arpReducer from './arp'
-import cardReducer from './card'
 import cardsReducer from './cards'
-import futureCollateralReducer from './futureCollateral'
+import futureCollateralReducer from './futureCollaterals'
 import billsReducer from './bills'
 import billReducer from './bill'
 import acceleratorReducer from './accelerator'
@@ -78,9 +77,8 @@ const persistedReducer = persistReducer(
     valuepool: valuepoolReducer,
     stakemarket: stakemarketReducer,
     trustbounties: trustbountiesReducer,
-    futureCollateral: futureCollateralReducer,
+    futureCollaterals: futureCollateralReducer,
     cards: cardsReducer,
-    card: cardReducer,
     arps: arpsReducer,
     arp: arpReducer,
     bills: billsReducer,

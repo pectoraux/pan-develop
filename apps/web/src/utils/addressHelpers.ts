@@ -19,6 +19,9 @@ export const getFeeToAddress = (chainId?: number) => {
 export const getCardAddress = (chainId?: number) => {
   return getAddress(addresses.card, chainId)
 }
+export const getFutureCollateralsAddress = (chainId?: number) => {
+  return getAddress(addresses.futureCollaterals, chainId)
+}
 export const getVeFromWorkspace = (wk: string) => {
   return getAddress(addresses[wk])
 }

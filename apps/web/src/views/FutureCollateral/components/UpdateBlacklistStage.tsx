@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react'
-import { Flex, Grid, Box, Text, Button, Input, ErrorIcon, ButtonMenu, ButtonMenuItem } from '@pancakeswap/uikit'
+import { Flex, Grid, Box, Input, Text, Button, ErrorIcon, ButtonMenu, ButtonMenuItem } from '@pancakeswap/uikit'
 import { useTranslation } from '@pancakeswap/localization'
 import { StyledItemRow } from 'views/Nft/market/components/Filters/ListFilter/styles'
 import { GreyedOutContainer, Divider } from './styles'
@@ -16,6 +16,7 @@ interface SetPriceStageProps {
 const SetPriceStage: React.FC<any> = ({
   state,
   handleChange,
+  handleRawValueChange,
   continueToNextStage,
 }) => {
   const { t } = useTranslation()
@@ -29,26 +30,37 @@ const SetPriceStage: React.FC<any> = ({
 
   return (
     <>
-      <GreyedOutContainer>
-        <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
-          {t('Owner Address')}
+    <GreyedOutContainer>
+      <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
+        {t('Profile ID')}
+      </Text>
+      <Input
+        type="text"
+        scale="sm"
+        name='profileId'
+        value={state.profileId}
+        placeholder={t('input user profile id')}
+        onChange={handleChange}
+      />
+    </GreyedOutContainer>
+    <GreyedOutContainer>
+      <StyledItemRow>
+        <Text fontSize="12px" color="secondary" textTransform="uppercase" paddingTop="3px" paddingRight="50px" bold>
+          {t('Add ?')}
         </Text>
-        <Input
-          type="text"
-          scale="sm"
-          name='owner'
-          value={state.owner}
-          placeholder={t('input owner address')}
-          onChange={handleChange}
-        />
-      </GreyedOutContainer>
-      <Grid gridTemplateColumns="32px 1fr" p="16px" maxWidth="360px">
+        <ButtonMenu scale="xs" variant='subtle' activeIndex={state.add ? 1 : 0} onItemClick={handleRawValueChange('add')}>
+          <ButtonMenuItem >{t("No")}</ButtonMenuItem>
+          <ButtonMenuItem >{t("Yes")}</ButtonMenuItem>
+        </ButtonMenu> 
+      </StyledItemRow>
+    </GreyedOutContainer>
+    <Grid gridTemplateColumns="32px 1fr" p="16px" maxWidth="360px">
       <Flex alignSelf="flex-start">
         <ErrorIcon width={24} height={24} color="textSubtle" />
       </Flex>
       <Box>
         <Text small color="textSubtle">
-          {t('The will burn your NFT. Please read the documentation for more information')}
+          {t('The will add the specified profile or remove the specified address from the blacklist. Please read the documentation for more information')}
         </Text>
       </Box>
     </Grid>
@@ -56,10 +68,9 @@ const SetPriceStage: React.FC<any> = ({
       <Flex flexDirection="column" px="16px" pb="16px">
         <Button
           mb="8px"
-          variant='danger'
           onClick={continueToNextStage}
         >
-          {t('Burn')}
+          {t('Update Blacklist')}
         </Button>
       </Flex>
     </>

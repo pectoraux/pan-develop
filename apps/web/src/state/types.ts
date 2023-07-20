@@ -688,6 +688,8 @@ export interface State {
   contributors: any
   game: any
   games: any
+  cards: any
+  futureCollaterals: any
   lottery: any
   lotteries: any
   profile: any

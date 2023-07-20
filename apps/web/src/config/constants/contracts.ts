@@ -26,6 +26,10 @@ export default {
     56: '',
     97: '0xd0628710a7f313f12307b548F5d629f4Ba16bE30',
   },
+  futureCollaterals: {
+    56: '',
+    97: '0xD31fd0E3F1E41496836fE67f7178bFB9e5267c2a',
+  },
   profile: {
     56: '',
     97: '0x6a1675e15290e9e53f3dBCA4E7Eb8f123aCc0c25',

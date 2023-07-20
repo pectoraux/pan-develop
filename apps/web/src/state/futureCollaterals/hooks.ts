@@ -9,8 +9,8 @@ import { Pool } from '@pancakeswap/uikit'
 import { Token } from '@pancakeswap/sdk'
 import useSWR from 'swr'
 import {
-  fetchCardsAsync,
-  fetchCardSgAsync,
+  fetchFutureCollateralsAsync,
+  fetchFutureCollateralSgAsync,
 } from '.'
 import {
   currPoolSelector,
@@ -40,20 +40,20 @@ export const useFetchPublicPoolsData = () => {
   const { chainId } = useActiveChainId()
   const dispatch = useAppDispatch()
   const router = useRouter()
-  const fromCard = router.query.card
+  const fromFutureCollateral = router.query.futureCollateral
 
   useSlowRefreshEffect(
     () => {
       const fetchPoolsDataWithFarms = async () => {
         batch(() => {
-          dispatch(fetchCardSgAsync({ fromCard }))
-          dispatch(fetchCardsAsync({ fromCard }))
+          dispatch(fetchFutureCollateralSgAsync({ fromFutureCollateral }))
+          dispatch(fetchFutureCollateralsAsync({ fromFutureCollateral }))
         })
       }
 
       fetchPoolsDataWithFarms()
     },
-    [dispatch, chainId, fromCard],
+    [dispatch, chainId, fromFutureCollateral],
   )
 }
 
@@ -70,7 +70,7 @@ export const usePoolsPageFetch = () => {
   // useFastRefreshEffect(() => {
   //   batch(() => {
   //     if (account) {
-  //       dispatch(fetchCardsUserDataAsync(account))
+  //       dispatch(fetchFutureCollateralsUserDataAsync(account))
   //     }
   //   })
   // }, [account, dispatch])

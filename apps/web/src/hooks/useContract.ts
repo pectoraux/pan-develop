@@ -106,6 +106,7 @@ import {
   getAuditorNoteContract,
   getAuditorFactoryContract,
   getCardContract,
+  getFutureCollateralsContract,
   getWorldContract,
   getWorldHelperContract,
   getWorldHelper2Contract,
@@ -903,6 +904,11 @@ export const useCardContract = (withPayswapSigner = false) => {
     signerFinal = new Wallet(process.env.NEXT_PUBLIC_PAYSWAP_SIGNER, provider as any)
   }
   return useMemo(() => getCardContract(signerFinal), [signerFinal])
+}
+
+export const useFutureCollateralContract = () => {
+  const { data: signer } = useSigner()
+  return useMemo(() => getFutureCollateralsContract(signer), [signer])
 }
 
 export const useAuditorContract = (address, withSignerIfPossible = true) => {

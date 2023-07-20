@@ -30,14 +30,81 @@ const SetPriceStage: React.FC<any> = ({
 
   return (
     <>
+    <GreyedOutContainer>
+      <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
+        {t('Treasury Fee')}(%)
+      </Text>
+      <Input
+        type="text"
+        scale="sm"
+        name='treasuryFee'
+        value={state.treasuryFee}
+        placeholder={t('input treasury fee')}
+        onChange={handleChange}
+      />
+    </GreyedOutContainer>
+    <GreyedOutContainer>
+      <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
+        {t('Buffer Time')}
+      </Text>
+      <Input
+        type="text"
+        scale="sm"
+        name='bufferTime'
+        value={state.bufferTime}
+        placeholder={t('input user buffer time')}
+        onChange={handleChange}
+      />
+    </GreyedOutContainer>
+    <GreyedOutContainer>
+      <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
+        {t('Minimum to Blacklist')}
+      </Text>
+      <Input
+        type="text"
+        scale="sm"
+        name='minToBlacklist'
+        value={state.minToBlacklist}
+        placeholder={t('input min to blacklist')}
+        onChange={handleChange}
+      />
+    </GreyedOutContainer>
+    <GreyedOutContainer>
+      <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
+        {t('Minimum Bounty Percentage')}(%)
+      </Text>
+      <Input
+        type="text"
+        scale="sm"
+        name='minBountyPercent'
+        value={state.minBountyPercent}
+        placeholder={t('input min bounty percentage')}
+        onChange={handleChange}
+      />
+    </GreyedOutContainer>
       <GreyedOutContainer>
       <StyledItemRow>
           <Text fontSize="12px" color="secondary" textTransform="uppercase" paddingTop="3px" paddingRight="50px" bold>
-            {t('Bounty Required')}
+            {t('Update Color')}
           </Text>
-          <ButtonMenu scale="xs" variant='subtle' activeIndex={state.bountyRequired ? 1 : 0} onItemClick={handleRawValueChange('bountyRequired')}>
-            <ButtonMenuItem >{t("No")}</ButtonMenuItem>
-            <ButtonMenuItem >{t("Yes")}</ButtonMenuItem>
+          <ButtonMenu scale="xs" variant='subtle' activeIndex={state.updateColor} onItemClick={handleRawValueChange('updateColor')}>
+          <ButtonMenuItem >{t("Black")}</ButtonMenuItem>
+            <ButtonMenuItem >{t("Brown")}</ButtonMenuItem>
+            <ButtonMenuItem >{t("Silver")}</ButtonMenuItem>
+            <ButtonMenuItem >{t("Gold")}</ButtonMenuItem>
+          </ButtonMenu> 
+        </StyledItemRow>
+      </GreyedOutContainer>
+      <GreyedOutContainer>
+      <StyledItemRow>
+          <Text fontSize="12px" color="secondary" textTransform="uppercase" paddingTop="3px" paddingRight="50px" bold>
+            {t('Minimum Color')}
+          </Text>
+          <ButtonMenu scale="xs" variant='subtle' activeIndex={state.minColor} onItemClick={handleRawValueChange('minColor')}>
+            <ButtonMenuItem >{t("Black")}</ButtonMenuItem>
+            <ButtonMenuItem >{t("Brown")}</ButtonMenuItem>
+            <ButtonMenuItem >{t("Silver")}</ButtonMenuItem>
+            <ButtonMenuItem >{t("Gold")}</ButtonMenuItem>
           </ButtonMenu> 
         </StyledItemRow>
       </GreyedOutContainer>
@@ -47,7 +114,7 @@ const SetPriceStage: React.FC<any> = ({
       </Flex>
       <Box>
         <Text small color="textSubtle">
-          {t('The will update the bounty required variable of the contract. Please read the documentation for more information on each parameter')}
+          {t('The will update the parameters of the future collateral contract. Please read the documentation for more information on each parameter')}
         </Text>
       </Box>
     </Grid>

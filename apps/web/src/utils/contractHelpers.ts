@@ -125,11 +125,13 @@ import {
   getWorldHelper2Address,
   getWorldHelper3Address,
   getCardAddress,
+  getFutureCollateralsAddress,
 } from 'utils/addressHelpers'
 
 // ABI
 import cardABI from 'config/abi/card.json'
 import profileABI from 'config/abi/profile.json'
+import futureCollateralsABI from 'config/abi/futureCollaterals.json'
 import profileHelperABI from 'config/abi/profileHelper.json'
 import poolGaugeAbi from 'config/abi/poolGauge.json'
 import feeToAbi from 'config/abi/feeTo.json'
@@ -425,6 +427,7 @@ import type {
   RandomNumberGenerator,
   LotteryRandomNumberGenerator,
   Card,
+  FutureCollaterals,
 } from 'config/abi/types'
 import { ChainId } from '@pancakeswap/sdk'
 
@@ -836,6 +839,14 @@ export const getCardContract = (signer?: Signer | Provider) => {
     address: getCardAddress(), 
     signer
   }) as Card
+}
+
+export const getFutureCollateralsContract = (signer?: Signer | Provider) => {
+  return getContract({
+    abi: futureCollateralsABI, 
+    address: getFutureCollateralsAddress(), 
+    signer
+  }) as FutureCollaterals
 }
 
 export const getWillContract = (willContractAddress: string, signer?: Signer | Provider) => {

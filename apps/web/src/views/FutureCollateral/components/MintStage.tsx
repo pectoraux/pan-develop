@@ -68,14 +68,79 @@ const SetPriceStage: React.FC<any> = ({
     <>
     <GreyedOutContainer>
         <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
-          {t('Amount')}
+          {t('Auditor')}
         </Text>
         <Input
           type="text"
           scale="sm"
-          name='amountPayable'
-          value={state.amountPayable}
-          placeholder={t('input of amount to mint')}
+          name='auditor'
+          value={state.auditor}
+          placeholder={t('input auditor address')}
+          onChange={handleChange}
+        />
+    </GreyedOutContainer>
+    <GreyedOutContainer>
+        <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
+          {t('Recipient Address')}
+        </Text>
+        <Input
+          type="text"
+          scale="sm"
+          name='owner'
+          value={state.owner}
+          placeholder={t('input recipient address')}
+          onChange={handleChange}
+        />
+    </GreyedOutContainer>
+    <GreyedOutContainer>
+        <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
+          {t('Stake ID')}
+        </Text>
+        <Input
+          type="text"
+          scale="sm"
+          name='stakeId'
+          value={state.stakeId}
+          placeholder={t('input your stake id')}
+          onChange={handleChange}
+        />
+    </GreyedOutContainer>
+    <GreyedOutContainer>
+        <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
+          {t('User Bounty ID')}
+        </Text>
+        <Input
+          type="text"
+          scale="sm"
+          name='userBountyId'
+          value={state.userBountyId}
+          placeholder={t('input your bounty id')}
+          onChange={handleChange}
+        />
+    </GreyedOutContainer>
+    <GreyedOutContainer>
+        <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
+          {t('Auditor Bounty ID')}
+        </Text>
+        <Input
+          type="text"
+          scale="sm"
+          name='auditorBountyId'
+          value={state.auditorBountyId}
+          placeholder={t('input the bounty id of your lender')}
+          onChange={handleChange}
+        />
+    </GreyedOutContainer>
+    <GreyedOutContainer>
+        <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
+          {t('Channel Number')}
+        </Text>
+        <Input
+          type="text"
+          scale="sm"
+          name='channel'
+          value={state.channel}
+          placeholder={t('input channel number')}
           onChange={handleChange}
         />
     </GreyedOutContainer>
@@ -85,7 +150,7 @@ const SetPriceStage: React.FC<any> = ({
       </Flex>
       <Box>
         <Text small color="textSubtle">
-          {t('The will mint the specified amount of token to the recipient. Please read the documentation for more details.')}
+          {t('The will mint a future collateral for the recipient. Please read the documentation for more details.')}
         </Text>
       </Box>
     </Grid>
@@ -93,13 +158,7 @@ const SetPriceStage: React.FC<any> = ({
       <Flex flexDirection="column" px="16px" pb="16px">
         <Button
           mb="8px"
-          onClick={() => {
-            if(pool?.automatic) {
-            processCharge() 
-             } else if (pool?.devaddr_ === account) { 
-            continueToNextStage()
-            }
-          }}
+          onClick={continueToNextStage}
             endIcon={isLoading ? <AutoRenewIcon spin color="currentColor" /> : undefined}
           // disabled={priceIsValid || adjustedPriceIsTheSame || priceIsOutOfRange}
         >

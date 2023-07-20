@@ -52,7 +52,7 @@ const Pools: React.FC<any> = () => {
   const inputCurency = useCurrency(DEFAULT_TFIAT)
   const [currency, setCurrency] = useState(inputCurency)
   const handleInputSelect = useCallback((currencyInput) => setCurrency(currencyInput),[],)
-  const [onPresentCreateGauge] = useModal(<CreateFutureCollateralModal />,)
+  const [onPresentCreateGauge] = useModal(<CreateFutureCollateralModal currency={currency} />,)
   const [onPresentTrustBounties] = useModal(<CreateBountyModal currency={currency ?? inputCurency} />,)
 
   usePoolsPageFetch()
@@ -64,27 +64,26 @@ const Pools: React.FC<any> = () => {
         <Flex justifyContent="space-between" flexDirection={['column', null, null, 'row']}>
           <Flex flex="1" flexDirection="column" mr={['8px', 0]}>
             <Heading as="h1" scale="xxl" color="secondary" mb="24px">
-              {isBounties ? t('Trust Bounties') : t('FutureCollateral Contracts')}
+              {isBounties ? t('Trust Bounties') : t('Future Collaterals')}
             </Heading>
             <Heading scale="md" color="text">
-            {isBounties ? t('Create a trust bounty to improve trust with your customers.') : t('Create a contract and start receiving audit requests')}
+            {isBounties ? t('Create a trust bounty to improve trust with your customers.') : t('Mint a collateral that appreciates in value')}
             </Heading>
             <Heading scale="md" color="text">
-              {t('Browse between different futureCollaterals and pick the best for your type of audit')}
+              {t('Read the documentation to understand how future collaterals work, then pick and mint your collateral.')}
             </Heading>
             <Flex>
               <Button p="0" variant="text">
                 <Text color="primary" onClick={isBounties ? onPresentTrustBounties : onPresentCreateGauge} bold fontSize="16px" mr="4px">
-                  {isBounties ? t('Create an Bounty in ') : t('Create a contract')}{' '}
+                  {isBounties ? t('Create an Bounty in ') : t('Mint Collateral')}{' '}
                 </Text>
-                {isBounties &&
                 <CurrencyInputPanel
                   showInput={false}
                   currency={currency ?? inputCurency}
                   onCurrencySelect={handleInputSelect}
                   otherCurrency={currency ?? inputCurency}
                   id='futureCollaterals-currency'
-                />}
+                />
               </Button>
               <ArrowForwardIcon onClick={isBounties ? onPresentTrustBounties : onPresentCreateGauge} color="primary" />
             </Flex>

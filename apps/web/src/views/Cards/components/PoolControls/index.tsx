@@ -1,5 +1,5 @@
 import { useWeb3React } from '@pancakeswap/wagmi'
-import { Cards } from '@pancakeswap/uikit'
+import { PayCards } from '@pancakeswap/uikit'
 import { useUserPoolStakedOnly, useUserPoolsViewMode } from 'state/user/hooks'
 import { useInitialBlock } from 'state/block/hooks'
 import { BSC_BLOCK_TIME } from 'config'
@@ -15,7 +15,7 @@ export default function PoolControlsContainer(props) {
   const threshHold = initialBlock > 0 ? initialBlock + POOL_START_BLOCK_THRESHOLD : 0
 
   return (
-    <Cards.PoolControls<Token>
+    <PayCards.PoolControls<Token>
       {...props}
       stakedOnly={stakedOnly}
       setStakedOnly={setStakedOnly}
