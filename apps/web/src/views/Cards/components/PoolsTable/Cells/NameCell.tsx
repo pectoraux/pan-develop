@@ -6,6 +6,7 @@ import SaveIcon from 'views/Info/components/SaveIcon'
 import { getVaultPosition, VaultPosition, VaultPositionParams } from 'utils/cakePool'
 import { Token } from '@pancakeswap/sdk'
 import { useWatchlistTokens } from 'state/user/hooks'
+import truncateHash from '@pancakeswap/utils/truncateHash'
 import BaseCell, { CellContent } from './BaseCell'
 
 interface NameCellProps {
@@ -33,7 +34,7 @@ const NameCell: React.FC<any> = ({ pool }) => {
       <CellContent>
         <Text bold={!isMobile} small={isMobile}>
           <Flex flexDirection="row">
-            {t(pool?.collection?.name ?? '')}
+            {truncateHash(pool?.id, 8, 0)}
             <SaveIcon 
               fill={watchlistTokens.includes(pool?.id)} 
               onClick={() => addWatchlistToken(pool?.id)} 

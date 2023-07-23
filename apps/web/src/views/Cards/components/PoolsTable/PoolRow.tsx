@@ -37,7 +37,7 @@ const PoolRow: React.FC<any> = ({
     >
       <NameCell pool={pool} />
       <TotalUsersCell pool={pool} account={account} labelText={t("Total Balances")} />
-      <TotalValueCell labelText={t('Balance')} symbol={currAccount?.symbol ?? ''} decimals={currAccount?.decimals} value={currAccount?.balance} />
+      <TotalValueCell labelText={t('Balance')} symbol={currAccount?.symbol ?? ''} decimals={currAccount?.decimals ?? 18} value={currAccount?.balance} />
       <TotalValueCell labelText={t('Token ID')} symbol={''} decimals={0} value={pool?.tokenId} />
     </ExpandRow>
   )

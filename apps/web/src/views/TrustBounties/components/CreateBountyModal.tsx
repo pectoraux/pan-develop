@@ -73,7 +73,8 @@ const CreateStakeModal: React.FC<any> = ({
     endTime: '',
     isNFT: 0,
     recurring: 0,
-    bountySource: ''
+    bountySource: '',
+    token: ''
   })
   const handleCreateGauge = useCallback(async () => {
       setPendingFb(true);
@@ -93,7 +94,7 @@ const CreateStakeModal: React.FC<any> = ({
       const ve = getVeFromWorkspace(nftFilters?.workspace?.value?.toLowerCase())
       const args = [
         account,
-        currencyAddress,
+        !state.isNFT ? currencyAddress : state.token,
         ve, 
         state.claimableBy,
         state.parentBountyId, 
@@ -238,19 +239,6 @@ const CreateStakeModal: React.FC<any> = ({
       </GreyedOutContainer>
       <GreyedOutContainer>
         <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
-          {t('Minimum To Claim')}
-        </Text>
-        <Input
-          type="text"
-          scale="sm"
-          name='minToClaim'
-          value={state.minToClaim}
-          placeholder={t('input min amount to claim')}
-          onChange={handleChange}
-        />
-      </GreyedOutContainer>
-      <GreyedOutContainer>
-        <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
           {t('Link to Avatar')}
         </Text>
         <Input
@@ -285,6 +273,20 @@ const CreateStakeModal: React.FC<any> = ({
       </ButtonMenu>
       </StyledItemRow>
     </GreyedOutContainer>
+    {state.isNFT ?
+      <GreyedOutContainer>
+      <Text fontSize="12px" color="secondary" textTransform="uppercase" bold>
+        {t('NFT Address')}
+      </Text>
+      <Input
+        type="text"
+        scale="sm"
+        name='token'
+        value={state.token}
+        placeholder={t('input address of nft contract')}
+        onChange={handleChange}
+      />
+    </GreyedOutContainer>: null}
     <GreyedOutContainer style={{ paddingTop:"50px" }}>
         <StyledItemRow>
         <Text fontSize="12px" color="secondary" textTransform="uppercase" paddingTop="3px" paddingRight="50px" bold>
@@ -320,8 +322,8 @@ const CreateStakeModal: React.FC<any> = ({
             value: 'Businesses',
           },
           {
-            label: 'CBC',
-            value: 'CBC',
+            label: 'Future Collateral',
+            value: 'Future Collateral',
           },
           {
             label: 'Contributors',
@@ -394,7 +396,7 @@ const CreateStakeModal: React.FC<any> = ({
           endIcon={pendingTx || pendingFb ? <AutoRenewIcon spin color="currentColor" /> : null}
           isLoading={pendingTx || pendingFb}
         >
-        {t('%text% %symbol%', { text: 'Create a bounty with', symbol: currency.symbol, titleName })}
+        {t('%text% %symbol%', { text: 'Create a bounty with', symbol: !state.isNFT ? currency.symbol : 'NFT', titleName })}
       </Button>}
       </Flex>
     </Modal>

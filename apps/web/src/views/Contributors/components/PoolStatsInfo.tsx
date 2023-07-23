@@ -25,6 +25,7 @@ import { useAppDispatch } from 'state'
 import ReactMarkdown from 'components/ReactMarkdown'
 import { setCurrBribeData } from 'state/contributors'
 import { useCurrBribe } from 'state/contributors/hooks'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import ClearAllButton from './ClearAllButton'
 
 interface ExpandedFooterProps {
@@ -44,6 +45,7 @@ const PoolStatsInfo: React.FC<any> = ({
   const earningToken = useToken(tokenAddress)
   const dispatch = useAppDispatch()
   const currState = useCurrBribe()
+  const { chainId } = useActiveWeb3React()
 
   const SmartContractIcon: React.FC<React.PropsWithChildren<SvgProps>> = (props) => {
     return (
@@ -79,6 +81,11 @@ const PoolStatsInfo: React.FC<any> = ({
   }
 
   // const [onPresentPayChat] = useModal(<QuizModal title="PayChat" link="https://matrix.to/#/!aGnoPysxAyEOUwXcJW:matrix.org?via=matrix.org" />)
+  const SCAN_DOMAIN = {
+    56: 'bscscan',
+    97: 'testnet.bscscan',
+    4002: 'testnet.ftmscan'
+  }
 
   return (
     <Flex flexDirection='column' maxHeight='200px' overflow='auto'>
@@ -89,33 +96,31 @@ const PoolStatsInfo: React.FC<any> = ({
         </LinkExternal>
       </Flex>
       <Flex flex="1" flexDirection="column" alignSelf="flex-center">
-        <Text color="primary" fontSize="14px">
-          {t("Cosign Enabled")} {`->`} {pool?.cosignEnabled ? t("True") : t("False")}
-        </Text>
-        {pool.cosignEnabled ?
+      {pool?.collection?.countries ?
           <Text color="primary" fontSize="14px">
-          {t("Minimum Cosigners")} {`->`} {pool?.minCosigners}
+          {t("Countries")} {`->`} {(Object.keys(pool?.collection?.countries).filter((elt) => pool?.collection.countries[elt])).join('; ')}
         </Text>:null}
-        {/* {pool?.valueName ?
-        <Text color="primary" fontSize="14px">
-          {t("Testimony value")} {`->`} {pool?.valueName}
-        </Text>:null} */}
-        {pool?.country ?
+        {pool?.collection?.cities ?
           <Text color="primary" fontSize="14px">
-          {t("Country")} {`->`} {pool.country}
+          {t("Cities")} {`->`} {(Object.keys(pool?.collection?.cities).filter((elt) => pool?.collection.cities[elt])).join('; ')}
         </Text>:null}
-        {pool?.city ?
+        {pool?.collection?.productTags ?
           <Text color="primary" fontSize="14px">
-          {t("City")} {`->`} {pool.city}
+          {t("Tags")} {`->`} {(Object.keys(pool?.collection?.productTags).filter((elt) => pool?.collection.productTags[elt])).join('; ')}
         </Text>:null}
       </Flex>
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/info/token/${vestingTokenAddress}`} bold={false} small>
+        <LinkExternal href={`https://${SCAN_DOMAIN[chainId]}.com/address/${pool?.vestingTokenAddress}`} bold={false} small>
           {t('See Token Info')}
         </LinkExternal>
       </Flex>
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href='earningToken.projectLink' bold={false} small>
+        <LinkExternal href={`https://${SCAN_DOMAIN[chainId]}.com/address/${pool?.owner}`} bold={false} small>
+          {t('See Owner Info')}
+        </LinkExternal>
+      </Flex>
+      <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
+        <LinkExternal href={`/cancan/collections/${pool?.collection?.id}`} bold={false} small>
           {t('View Business Channel')}
         </LinkExternal>
       </Flex>
@@ -141,7 +146,7 @@ const PoolStatsInfo: React.FC<any> = ({
           {t('Pick a bribe')}
           <ClearAllButton tokens={false} />
         </Text>
-      </Flex> : <Skeleton width={180} height="32px" mb="2px" />}
+      </Flex> : null}
       <Flex flexWrap="wrap" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'} alignItems="center">
         {pool.bribes?.map((bribe) => (
           <Button

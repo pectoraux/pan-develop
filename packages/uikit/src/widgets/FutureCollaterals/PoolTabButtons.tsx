@@ -72,17 +72,17 @@ const PoolTabButtons = ({
 
   const { t } = useTranslation();
 
-  const isExact = router.pathname.includes('auditors/bounties/admin')
+  const isExact = router.pathname.includes('futureCollaterals/bounties/admin')
   
   const viewModeToggle = <ToggleView idPrefix="clickPool" viewMode={viewMode} onToggle={setViewMode} />;
 
   const liveOrFinishedSwitch = (
     <Wrapper>
       <ButtonMenu activeIndex={isExact ? 1 : 0} scale="sm" variant="subtle">
-        <ButtonMenuItem as={NextLinkFromReactRouter} to="/auditors" replace>
-          {t('Auditors')}
+        <ButtonMenuItem as={NextLinkFromReactRouter} to="/futureCollaterals" replace>
+          {t('Collaterals')}
         </ButtonMenuItem>
-        <ButtonMenuItem as={NextLinkFromReactRouter} to="/auditors/bounties/admin" replace>
+        <ButtonMenuItem as={NextLinkFromReactRouter} to="/futureCollaterals/bounties/admin" replace>
           {t('Bounties')}
         </ButtonMenuItem>
       </ButtonMenu>
@@ -92,7 +92,7 @@ const PoolTabButtons = ({
   const stakedOnlySwitch = (
     <ToggleWrapper>
       <Toggle checked={stakedOnly} onChange={() => setStakedOnly(!stakedOnly)} scale="sm" />
-      <Text> {t("Staked only")}</Text>
+      <Text> {t("Mine only")}</Text>
     </ToggleWrapper>
   );
   

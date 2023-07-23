@@ -36,10 +36,10 @@ const PoolRow: React.FC<any> = ({
       }
     >
       <NameCell pool={pool} />
-      <TotalUsersCell pool={pool} account={account} labelText={t("Total Accounts")} />
-      <VotesCell pool={pool} value={pool?.likes} />
-      <TotalValueCell labelText={t('Amount Due')} symbol={currAccount?.token?.symbol ?? ''} decimals={currAccount?.token?.decimals} value={currAccount?.amountReceivable} />
-      <EndsInCell currAccount={currAccount} />
+      <TotalValueCell labelText={t('Auditor Bounty ID')} value={pool?.auditorBountyId} />
+      <TotalValueCell labelText={t('User Bounty ID')} value={pool?.bountyId} />
+      <TotalValueCell labelText={t('Channel')} value={pool?.channel} />
+      <TotalValueCell labelText={t('Stake ID')} value={pool?.stakeId} />
     </ExpandRow>
   )
 }

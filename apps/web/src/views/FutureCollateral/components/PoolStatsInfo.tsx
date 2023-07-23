@@ -22,13 +22,11 @@ import {
 } from '@pancakeswap/uikit'
 import AddToWalletButton, { AddToWalletTextOptions } from 'components/AddToWallet/AddToWalletButton'
 import { useTranslation } from '@pancakeswap/localization'
-import ReactMarkdown from 'components/ReactMarkdown'
-import { Token } from '@pancakeswap/sdk'
 import { useAppDispatch } from 'state'
-import { setCurrPoolData } from 'state/futureCollaterals'
 import { useCurrPool } from 'state/futureCollaterals/hooks'
+import { getFutureCollateralsAddress } from 'utils/addressHelpers'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import WebPagesModal from './WebPagesModal'
-import WebPagesModal2 from './WebPagesModal2'
 
 interface ExpandedFooterProps {
   pool?: any
@@ -43,15 +41,13 @@ const PoolStatsInfo: React.FC<any> = ({
 }) => {
   const { t } = useTranslation()
   const router = useRouter()
+  const { chainId } = useActiveWeb3React()
   const [pendingTx, setPendingTx] = useState(false)
-  const { futureCollateralAddress } = pool
   const currState = useCurrPool()
   const currProtocol = pool?.accounts?.find((acct) => acct?.id === currState[pool?.id])
-  const earningToken = currProtocol?.token
-  const tokenAddress = earningToken?.address || ''
+  const tokenAddress = pool?.token?.address || ''
   const dispatch = useAppDispatch()
-  const [onPresentNotes] = useModal(<WebPagesModal height="500px" nfts={pool?.notes} />)
-  const [onPresentNFTs] = useModal(<WebPagesModal2 height="500px" nfts={currProtocol?.tokens} />)
+  const [onPresentNFT] = useModal(<WebPagesModal height="500px" tokenId={pool.id} metadataUrl={pool?.metadataUrl} />)
   
   const SmartContractIcon: React.FC<React.PropsWithChildren<SvgProps>> = (props) => {
     return (
@@ -84,75 +80,39 @@ const PoolStatsInfo: React.FC<any> = ({
         />
       </Svg>
     )
+  } 
+  const SCAN_DOMAIN = {
+    56: 'bscscan',
+    97: 'testnet.bscscan',
+    4002: 'testnet.ftmscan'
   }
-
-  // const [onPresentPayChat] = useModal(<QuizModal title="PayChat" link="https://matrix.to/#/!aGnoPysxAyEOUwXcJW:matrix.org?via=matrix.org" />)
 
   return (
     <Flex flexDirection='column' maxHeight='200px' overflow='auto'>
-      <Box><ReactMarkdown>{pool?.collection?.description}</ReactMarkdown></Box>
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <Button
-            as={Link}
-            variant="text"
-            p="0"
-            height="auto"
-            color="primary"
-            endIcon={pendingTx ? <AutoRenewIcon spin color="currentColor" /> : <ArrowForwardIcon onClick={() => { 
-              setPendingTx(true) 
-              router.push(`/futureCollaterals/${futureCollateralAddress}`)
-            }} color="primary" />}
-            isLoading={pendingTx}
-            onClick={() => {
-              setPendingTx(true)
-              router.push(`/futureCollaterals/${futureCollateralAddress}`)
-            }}
-          >
-            {t('View All Accounts')}
-          </Button>
-      </Flex>
-      <Flex flex="1" flexDirection="column" alignSelf="flex-center">
-        <Text color="primary" fontSize="14px">
-          {t("Bounty Required")} {`->`} {pool?.bountyRequired ? t("True") : t("False")}
-        </Text>
-        {pool?.collection?.country ?
-          <Text color="primary" fontSize="14px">
-          {t("Country")} {`->`} {pool.collection.country}
-        </Text>:null}
-        {pool?.collection?.city ?
-          <Text color="primary" fontSize="14px">
-          {t("City")} {`->`} {pool.collection.city}
-        </Text>:null}
-      </Flex>
-      <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/info/token/${earningToken?.address}`} bold={false} small>
+        <LinkExternal href={`https://${SCAN_DOMAIN[chainId]}.com/address/${pool?.token?.address}`} bold={false} small>
           {t('See Token Info')}
         </LinkExternal>
       </Flex>
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/info/token/${futureCollateralAddress}`} bold={false} small>
+        <LinkExternal href={`https://${SCAN_DOMAIN[chainId]}.com/address/${getFutureCollateralsAddress()}`} bold={false} small>
           {t('See Contract Info')}
         </LinkExternal>
       </Flex>
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/info/token/${pool?.devaddr_}`} bold={false} small>
-          {t('See Admin Info')}
+        <LinkExternal href={`https://${SCAN_DOMAIN[chainId]}.com/address/${pool?.owner}`} bold={false} small>
+          {t('See Owner Info')}
         </LinkExternal>
       </Flex>
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/cancan/${pool?.collectionId}`} bold={false} small>
-          {t('See Admin Channel')}
+        <LinkExternal href={`https://${SCAN_DOMAIN[chainId]}.com/address/${pool?.auditor}`} bold={false} small>
+          {t('See Auditor Info')}
         </LinkExternal>
       </Flex>
+      {pool?.metadataUrl ?
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal style={{ cursor: "pointer" }} onClick={onPresentNotes} bold={false} small>
-          {t('View Notes')}
-        </LinkExternal>
-      </Flex>
-      {currState[pool?.id] ?
-      <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal style={{ cursor: "pointer" }} onClick={onPresentNFTs} bold={false} small>
-          {t('View NFTs')}
+        <LinkExternal style={{ cursor: "pointer" }} onClick={onPresentNFT} bold={false} small>
+          {t('View NFT')}
         </LinkExternal>
       </Flex>:null}
       {account && tokenAddress && (
@@ -165,43 +125,13 @@ const PoolStatsInfo: React.FC<any> = ({
             marginTextBetweenLogo="4px"
             textOptions={AddToWalletTextOptions.TEXT}
             tokenAddress={tokenAddress}
-            tokenSymbol={earningToken?.symbol}
-            tokenDecimals={earningToken?.decimals}
+            tokenSymbol={pool?.token?.symbol}
+            tokenDecimals={pool?.oken?.decimals}
             tokenLogo={`https://tokens.pancakeswap.finance/images/${tokenAddress}.png`}
           />
         </Flex>
       )}
-      <Flex flexWrap="wrap" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'} alignItems="center">
-      {pool?.accounts?.length ? 
-        pool?.accounts.filter((protocol) => account?.toLowerCase() === protocol?.owner?.toLowerCase())
-        .map((balance) => (
-        <Button
-          key={balance.id}
-          onClick={() => {
-            const newState = { ...currState, [pool?.id]: balance?.id}
-            dispatch(setCurrPoolData(newState))
-          }}
-          mt="4px"
-          mr={['2px', '2px', '4px', '4px']}
-          scale="sm"
-          variant={currState[pool?.id] === balance?.id ? 'subtle' : 'tertiary'}
-        >
-          {balance?.protocolId}
-        </Button>
-        ))
-        : <Skeleton width={180} height="32px" mb="2px" />}
-        {pool?.accounts?.length ? 
-        <Button 
-          key="clear-all" 
-          variant="text" 
-          scale="sm" 
-          onClick={()=> dispatch(setCurrPoolData({}))} 
-          style={{ whiteSpace: 'nowrap' }}
-        >
-          {t('Clear')}
-        </Button>:null}
-      </Flex>
-      <Flex>
+      {/* <Flex>
           <FlexGap gap="16px" pt="24px" pl="4px">
             <IconButton as={Link} style={{ cursor: "pointer" }} 
             // onClick={onPresentProject}
@@ -233,7 +163,7 @@ const PoolStatsInfo: React.FC<any> = ({
               </IconButton>
             )}
           </FlexGap>
-      </Flex>
+      </Flex> */}
     </Flex>
   )
 }

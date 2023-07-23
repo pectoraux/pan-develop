@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js'
+import { Token } from '@pancakeswap/sdk'
 import { GRAPH_API_COLLATERALS } from 'config/constants/endpoints'
 import request, { gql } from 'graphql-request'
 import { 
@@ -34,7 +35,7 @@ export const getCollaterals = async (first = 5, skip = 0, where) => {
     const res = await request(
       GRAPH_API_COLLATERALS,
       gql`
-        query getCollaterals($where: Card_filter) 
+        query getCollaterals($where: Collateral_filter) 
         {
           collaterals(first: $first, skip: $skip, where: $where) {
             ${futureCollateralFields}
@@ -54,36 +55,51 @@ export const getCollaterals = async (first = 5, skip = 0, where) => {
 export const fetchCollateral = async (ownerAddress) => {
   const collateralContract = getFutureCollateralsContract()
   const collateral = await getCollateral(ownerAddress.toLowerCase())
-  // const tokenId = await cardContract.tokenIds(card.id)
-  // const balances = await Promise.all(
-  //   card?.balances?.map(async (tk) => {
-  //   const tokenContract = getBep20Contract(tk.tokenAddress)
-  //   const [ name, decimals, symbol ] = await Promise.all([
-  //     tokenContract.name(),
-  //     tokenContract.decimals(),
-  //     tokenContract.symbol(),
-  //   ])
-  //   return {
-  //     ...tk,
-  //     name,
-  //     symbol,
-  //     decimals
-  //   }
-  // }))
-  // probably do some decimals math before returning info. Maybe get more info. I don't know what it returns.
+  const tokenAddress = await collateralContract.token()
+  const tokenContract = getBep20Contract(tokenAddress)
+  const [ name, decimals, symbol ] = await Promise.all([
+    tokenContract.name(),
+    tokenContract.decimals(),
+    tokenContract.symbol(),
+  ])
   return {
     ...collateral,
+    token: new Token(
+      56,
+      tokenAddress,
+      decimals,
+      symbol?.toUpperCase() ?? 'symbol',
+      name ?? 'name',
+      'https://www.payswap.org/',
+    ),
   }
 }
 
 export const fetchFutureCollaterals = async ({ fromFutureCollateral }) => {
   const collateralContract = getFutureCollateralsContract()
   const fromGraph = await getCollaterals(0,0,{})
+  const tokenAddress = await collateralContract.token()
+  const tokenContract = getBep20Contract(tokenAddress)
+  const [ name, decimals, symbol ] = await Promise.all([
+    tokenContract.name(),
+    tokenContract.decimals(),
+    tokenContract.symbol(),
+  ])
   const collaterals = await Promise.all(
     fromGraph.map(async (collateral, index) => {
+        const fund = await collateralContract.fund(collateral.channel)
         return {
           sousId: index,
           ...collateral,
+          fund: new BigNumber(fund._hex).toJSON(),
+          token: new Token(
+            56,
+            tokenAddress,
+            decimals,
+            symbol?.toUpperCase() ?? 'symbol',
+            name ?? 'name',
+            'https://www.payswap.org/',
+          ),
         }
     }).flat()
   )

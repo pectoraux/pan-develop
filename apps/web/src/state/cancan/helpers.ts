@@ -177,7 +177,7 @@ export const getNftApi = async (
 export const getNftsFromDifferentCollectionsApi = async (
   from: { collectionAddress: string; tokenId: string }[],
 ) => {
-  const promises = from.map((nft) => getNftApi(nft.collectionAddress, nft.tokenId))
+  const promises = from?.length ? from.map((nft) => getNftApi(nft.collectionAddress, nft.tokenId)) : []
   const responses = await Promise.all(promises)
   // Sometimes API can't find some tokens (e.g. 404 response)
   // at least return the ones that returned successfully

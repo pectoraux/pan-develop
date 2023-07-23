@@ -15,6 +15,8 @@ export const stagesWithApproveButton = [
 ]
 
 export const stagesWithBackButton = [
+  LockStage.UPDATE_ADMIN,
+  LockStage.CONFIRM_UPDATE_ADMIN,
   LockStage.UPDATE_ESTIMATION_TABLE,
   LockStage.CONFIRM_UPDATE_ESTIMATION_TABLE,
   LockStage.ADD_TO_CHANNEL,
@@ -38,6 +40,7 @@ export const stagesWithBackButton = [
 ]
 
 export const stagesWithConfirmButton = [
+  LockStage.CONFIRM_UPDATE_ADMIN,
   LockStage.CONFIRM_BURN,
   LockStage.CONFIRM_SELL_COLLATERAL,
   LockStage.CONFIRM_WITHDRAW_TREASURY,

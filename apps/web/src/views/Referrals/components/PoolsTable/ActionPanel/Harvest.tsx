@@ -1,11 +1,18 @@
 import { useTranslation } from '@pancakeswap/localization'
 import { Flex, Pool, Text } from '@pancakeswap/uikit'
-import NFTMedia from 'views/CanCan/market/components/NFTMedia'
-import PreviewImage from 'views/Nft/market/components/CollectibleCard/PreviewImage'
+import { ActionContainer, ActionTitles, ActionContent } from './styles'
 
 const HarvestAction: React.FunctionComponent<any> = ({ pool }) => {
-    return (
-        <NFTMedia as={PreviewImage} nft={pool} height={200} width={200} ml="18px" borderRadius="8px" />
+  const { t } = useTranslation()
+  
+  return (
+        <ActionContainer>
+        <ActionContent>
+          <Text color="primary" fontSize="12px" display="inline" bold as="span" textTransform="uppercase">
+            {t("Open the votes for more details")}
+          </Text>
+        </ActionContent>
+      </ActionContainer>
     )
 }
 

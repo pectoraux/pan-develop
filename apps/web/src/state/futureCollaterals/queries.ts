@@ -7,4 +7,6 @@ export const futureCollateralFields = `
   bountyId
   auditorBountyId
   auditor
+  metadataUrl
+  createdAt
 `

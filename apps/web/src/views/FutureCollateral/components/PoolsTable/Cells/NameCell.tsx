@@ -33,7 +33,7 @@ const NameCell: React.FC<any> = ({ pool }) => {
       <CellContent>
         <Text bold={!isMobile} small={isMobile}>
           <Flex flexDirection="row">
-            {t(pool?.collection?.name ?? '')}
+            {t("Collateral #%id%", { id: pool?.id ?? ''})}
             <SaveIcon 
               fill={watchlistTokens.includes(pool?.id)} 
               onClick={() => addWatchlistToken(pool?.id)} 

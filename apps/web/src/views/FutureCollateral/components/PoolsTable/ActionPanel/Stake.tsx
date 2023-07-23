@@ -19,7 +19,7 @@ const Staked: React.FunctionComponent<any> = ({ pool, currAccount }) => {
   const { t } = useTranslation()
   const { account } = useWeb3React()
   const variant = pool?.devaddr_?.toLowerCase() === account?.toLowerCase() ? "admin" : "user"
-  const currencyId = useMemo(() => currAccount?.token?.address, [currAccount])
+  const currencyId = useMemo(() => pool?.token?.address, [currAccount])
   const inputCurrency = useCurrency(currencyId)
   const [currency, setCurrency] = useState(inputCurrency)
   const [openPresentControlPanel] = useModal(

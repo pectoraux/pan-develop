@@ -10,21 +10,16 @@ interface BuyTicketsModalProps {
   onDismiss?: () => void
 }
   
-const WebPageModal: React.FC<any> = ({ nfts, height="400px", onDismiss }) => {
+const WebPageModal: React.FC<any> = ({ tokenId, metadataUrl, height="400px", onDismiss }) => {
   const { theme } = useTheme()
   const { t } = useTranslation()
   return (
     <Modal 
-      title={t("Notes")} 
+      title={t("NFT ID: %tokenId%", { tokenId })} 
       onDismiss={onDismiss}
       headerBackground={theme.colors.textSubtle}
     >
-      <Grid
-          gridTemplateColumns={['1fr', 'repeat(2, 1fr)', 'repeat(3, 1fr)']}
-          alignItems="start"
-        >
-          {nfts?.map((nft) => <Iframe url={nft.metadataUrl} height={height} styles={{ marginBottom: "10px" }} id="myId" />)}
-      </Grid>
+      <Iframe url={metadataUrl} height={height} styles={{ marginBottom: "10px" }} id="myId" />
     </Modal>
   )
 }

@@ -42,8 +42,7 @@ export const useFetchPublicPoolsData = () => {
   const router = useRouter()
   const fromCard = router.query.card
 
-  useSlowRefreshEffect(
-    () => {
+  useSWR("cards", () => {
       const fetchPoolsDataWithFarms = async () => {
         batch(() => {
           dispatch(fetchCardSgAsync({ fromCard }))
@@ -53,7 +52,7 @@ export const useFetchPublicPoolsData = () => {
 
       fetchPoolsDataWithFarms()
     },
-    [dispatch, chainId, fromCard],
+    // [dispatch, chainId, fromGame],
   )
 }
 

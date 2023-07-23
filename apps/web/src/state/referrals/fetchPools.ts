@@ -71,6 +71,12 @@ export const fetchReferrals = async () => {
           }
         })
       )
+      const tokenContract = getBep20Contract(vestingTokenAddress)
+      const [ vestingTokenName, vestingTokenDecimals, vestingTokenSymbol ] = await Promise.all([
+        tokenContract.name(),
+        tokenContract.decimals(),
+        tokenContract.symbol(),
+      ])
       
       // probably do some decimals math before returning info. Maybe get more info. I don't know what it returns.
       return {
@@ -78,6 +84,9 @@ export const fetchReferrals = async () => {
         bribes,
         collection,
         vestingTokenAddress,
+        vestingTokenName, 
+        vestingTokenDecimals, 
+        vestingTokenSymbol,
         gaugeWeight: new BigNumber(gaugeWeight._hex).toJSON(),
         weightPercent: new BigNumber(gaugeWeight._hex).times(100).div(totalWeight).toFixed(2),
         gaugeEarned: new BigNumber(gaugeEarned._hex).toJSON(),

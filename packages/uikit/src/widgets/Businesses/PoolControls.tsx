@@ -99,7 +99,7 @@ export function PoolControls<T>({
   );
   const [_searchQuery, setSearchQuery] = useState("");
   const searchQuery = normalizedUrlSearch && !_searchQuery ? normalizedUrlSearch : _searchQuery;
-  const [sortOption, setSortOption] = useState("hot");
+  const [sortOption, setSortOption] = useState("id");
   const [favoritesOnly, setFavoritesOnly] = useState(false)
   const chosenPoolsLength = useRef(0);
   const [watchlistTokens] = useWatchlistTokens()
@@ -112,13 +112,13 @@ export function PoolControls<T>({
   const stakedOnlyFinishedPools = useMemo(
     () =>
       finishedPools.filter((pool) => {
-        return pool.userData && new BigNumber(pool.userData.stakedBalance).isGreaterThan(0);
+        return pool.owner?.toLowerCase() === account?.toLowerCase();
       }),
     [finishedPools]
   );
   const stakedOnlyOpenPools = useCallback(() => {
     return openPoolsWithStartBlockFilter.filter((pool) => {
-      return pool.userData && new BigNumber(pool.userData.stakedBalance).isGreaterThan(0);
+      return pool.owner?.toLowerCase() === account?.toLowerCase();
     });
   }, [openPoolsWithStartBlockFilter]);
   const hasStakeInFinishedPools = stakedOnlyFinishedPools.length > 0;
@@ -151,12 +151,12 @@ export function PoolControls<T>({
 
   chosenPools = useMemo(() => {
     const sortedPools = sortPools<T>(account, sortOption, chosenPools).slice(0, numberOfPoolsVisible)
-    .filter((p: any) => favoritesOnly ? watchlistTokens.includes(p?.earningToken?.address) : true)
+    .filter((p: any) => favoritesOnly ? watchlistTokens.includes(`business-${p.id}`) : true)
 
     if (searchQuery) {
       const lowercaseQuery = latinise(searchQuery.toLowerCase());
-      return sortedPools.filter((pool) =>
-        latinise(pool?.earningToken?.symbol?.toLowerCase() || "").includes(lowercaseQuery)
+      return sortedPools.filter((pool: any) =>
+        latinise(pool?.id || "").includes(lowercaseQuery)
       );
     }
     return sortedPools;
@@ -198,24 +198,28 @@ export function PoolControls<T>({
               <Select
                 options={[
                   {
-                    label: t("Hot"),
-                    value: "hot",
+                    label: t("Business ID"),
+                    value: "id",
                   },
                   {
-                    label: t("APR"),
-                    value: "apr",
+                    label: t("Up Votes"),
+                    value: "upVotes",
                   },
                   {
                     label: t("Earned"),
-                    value: "earned",
+                    value: "gaugeEarned",
                   },
                   {
-                    label: t("Total staked"),
-                    value: "totalStaked",
+                    label: t("Weight"),
+                    value: "gaugeWeight",
                   },
                   {
-                    label: t("Latest"),
-                    value: "latest",
+                    label: t("Weight Percent"),
+                    value: "weightPercent",
+                  },
+                  {
+                    label: t("Creation Time"),
+                    value: "creationTime",
                   },
                 ]}
                 onOptionChange={handleSortOptionChange}
@@ -226,7 +230,7 @@ export function PoolControls<T>({
             <Text fontSize="12px" bold color="textSubtle" textTransform="uppercase">
               {t("Search")}
             </Text>
-            <SearchInput initialValue={searchQuery} onChange={handleChangeSearchQuery} placeholder="Search Pools" />
+            <SearchInput initialValue={searchQuery} onChange={handleChangeSearchQuery} placeholder={t("Search Businesses")} />
           </LabelWrapper>
         </FilterContainer>
       </PoolControlsView>

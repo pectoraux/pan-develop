@@ -10,7 +10,7 @@ import BigNumber from 'bignumber.js'
 import useTheme from 'hooks/useTheme'
 import { requiresApproval } from 'utils/requiresApproval'
 import { getDecimalAmount, getBalanceNumber } from '@pancakeswap/utils/formatBalance'
-import { useERC20, useFutureCollateralContract } from 'hooks/useContract'
+import { useERC20, useFutureCollateralContract, useTrustBountiesContract } from 'hooks/useContract'
 import { convertTimeToSeconds } from 'utils/timeHelper'
 import { useWeb3React } from '@pancakeswap/wagmi'
 import { useCallWithGasPrice } from 'hooks/useCallWithGasPrice'
@@ -28,6 +28,7 @@ import BurnStage from './BurnStage'
 import NotifyRewardStage from './NotifyRewardStage'
 import SellCollateralStage from './SellCollateralStage'
 import EraseDebtStage from './EraseDebtStage'
+import UpdateAdminStage from './UpdateAdminStage'
 import AdminWithdrawStage from './AdminWithdrawStage'
 import UpdateEstimationTableStage from './UpdateEstimationTableStage'
 import AddToChannelStage from './AddToChannelStage'
@@ -47,11 +48,13 @@ const modalTitles = (t: TranslateFunction) => ({
   [LockStage.WITHDRAW_TREASURY]: t('Withdraw'),
   [LockStage.NOTIFY_REWARD]: t('Notify Reward'),
   [LockStage.ERASE_DEBT]: t('Erase Debt'),
+  [LockStage.UPDATE_ADMIN]: t('Update Admin'),
   [LockStage.BURN]: t('Burn'),
   [LockStage.MINT]: t('Mint'),
   [LockStage.CONFIRM_MINT]: t('Mint'),
   [LockStage.CONFIRM_NOTIFY_REWARD]: t('Back'),
   [LockStage.CONFIRM_ERASE_DEBT]: t('Back'),
+  [LockStage.CONFIRM_UPDATE_ADMIN]: t('Back'),
   [LockStage.CONFIRM_BURN]: t('Back'),
   [LockStage.CONFIRM_ADD_TO_CHANNEL]: t('Back'),
   [LockStage.CONFIRM_UPDATE_BLACKLIST]: t('Back'),
@@ -119,9 +122,10 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, s
   const { callWithGasPrice } = useCallWithGasPrice()
   const { toastSuccess } = useToast()
   const router = useRouter()
-  const stakingTokenContract = useERC20(currency?.address || currAccount?.token?.address || '')
+  const stakingTokenContract = useERC20(pool?.token?.address || currency?.address || '')
   const cardContract = useFutureCollateralContract()
-  console.log("mcurrencyy===============>", state2, currAccount, currency, pool, cardContract)
+  const { signer: trustBountiesContract } = useTrustBountiesContract()
+  console.log("mcurrencyy===============>", trustBountiesContract, state2, currAccount, currency, pool, cardContract)
   // const [onPresentPreviousTx] = useModal(<ActivityHistory />,)
   const nodeRSA = new NodeRSA(
     process.env.NEXT_PUBLIC_PUBLIC_KEY,
@@ -250,9 +254,6 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, s
         setStage(LockStage.SETTINGS)
         break
       case LockStage.CONFIRM_WITHDRAW_TREASURY:
-        setStage(LockStage.WITHDRAW_TREASURY)
-        break
-      case LockStage.WITHDRAW_TREASURY:
         setStage(LockStage.SETTINGS)
         break
       case LockStage.CONFIRM_MINT:
@@ -271,6 +272,12 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, s
         setStage(LockStage.ERASE_DEBT)
         break
       case LockStage.ERASE_DEBT:
+        setStage(LockStage.SETTINGS)
+        break
+      case LockStage.CONFIRM_UPDATE_ADMIN:
+        setStage(LockStage.UPDATE_ADMIN)
+        break
+      case LockStage.UPDATE_ADMIN:
         setStage(LockStage.SETTINGS)
         break
       case LockStage.CONFIRM_BURN:
@@ -313,6 +320,9 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, s
       case LockStage.ERASE_DEBT:
         setStage(LockStage.CONFIRM_ERASE_DEBT)
         break
+      case LockStage.UPDATE_ADMIN:
+        setStage(LockStage.CONFIRM_UPDATE_ADMIN)
+        break
       case LockStage.BURN:
         setStage(LockStage.CONFIRM_BURN)
         break
@@ -324,13 +334,15 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, s
   const { isApproving, isApproved, isConfirming, handleApprove, handleConfirm } = useApproveConfirmTransaction({
     onRequiresApproval: async () => {
       try {
-        return requiresApproval(stakingTokenContract, account, cardContract.address)
+        return requiresApproval(stakingTokenContract, account, cardContract.address) && 
+        requiresApproval(stakingTokenContract, account, trustBountiesContract.address)
       } catch (error) {
         return true
       }
     },
     onApprove: () => {
       return callWithGasPrice(stakingTokenContract, 'approve', [cardContract.address, MaxUint256])
+      .then(() => callWithGasPrice(stakingTokenContract, 'approve', [trustBountiesContract.address, MaxUint256]))
     },
     onApproveSuccess: async ({ receipt }) => {
       toastSuccess(
@@ -357,6 +369,12 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, s
         console.log("CONFIRM_UPDATE_BLACKLIST===============>", args)
         return callWithGasPrice(cardContract, 'updateBlacklist', args)
         .catch((err) => console.log("CONFIRM_UPDATE_BLACKLIST===============>", err))
+      }
+      if (stage === LockStage.CONFIRM_UPDATE_ADMIN) {
+        const args = [state.owner, !!state.add]
+        console.log("CONFIRM_UPDATE_ADMIN===============>", args)
+        return callWithGasPrice(cardContract, 'updateDev', args)
+        .catch((err) => console.log("CONFIRM_UPDATE_ADMIN===============>", err))
       }
       if (stage === LockStage.CONFIRM_UPDATE_PARAMETERS) {
         const args = [state.treasuryFee,state.bufferTime,state.minToBlacklist,state.minBountyPercent,state.updateColor,state.minColor]
@@ -441,6 +459,9 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, s
           <Button mb="8px" variant='secondary' onClick={()=> setStage(LockStage.MINT) }>
             {t('MINT')}
           </Button>
+          <Button mb="8px" variant='secondary' onClick={()=> setStage(LockStage.UPDATE_ADMIN) }>
+            {t('UPDATE ADMIN')}
+          </Button>
           <Button mb="8px" variant='danger' onClick={()=> setStage(LockStage.NOTIFY_REWARD) }>
             {t('NOTIFY REWARD')}
           </Button>
@@ -455,16 +476,13 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, s
         {stage === LockStage.UPDATE_ESTIMATION_TABLE && 
           <UpdateEstimationTableStage
             state={state}
-            account={account}
-            currency={currency}
+            handleChange={handleChange}
             handleRawValueChange={handleRawValueChange}
             continueToNextStage={continueToNextStage} 
         />}
         {stage === LockStage.ADD_TO_CHANNEL && 
           <AddToChannelStage
             state={state}
-            account={account}
-            currency={currency}
             handleChange={handleChange}
             handleRawValueChange={handleRawValueChange}
             continueToNextStage={continueToNextStage} 
@@ -472,8 +490,6 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, s
         {stage === LockStage.UPDATE_BLACKLIST && 
           <UpdateBlacklistStage
             state={state}
-            account={account}
-            currency={currency}
             handleChange={handleChange}
             handleRawValueChange={handleRawValueChange}
             continueToNextStage={continueToNextStage} 
@@ -481,8 +497,7 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, s
         {stage === LockStage.UPDATE_PARAMETERS && 
           <UpdateParametersStage
             state={state}
-            account={account}
-            currency={currency}
+            handleChange={handleChange}
             handleRawValueChange={handleRawValueChange}
             continueToNextStage={continueToNextStage} 
         />}
@@ -496,6 +511,7 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, s
           <AdminWithdrawStage
             state={state}
             handleChange={handleChange}
+            handleRawValueChange={handleRawValueChange}
             continueToNextStage={continueToNextStage} 
         />}
       {stage === LockStage.MINT && 
@@ -507,7 +523,10 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, s
         {stage === LockStage.NOTIFY_REWARD && 
         <NotifyRewardStage 
           state={state} 
+          account={account}
+          currency={currency}
           handleChange={handleChange} 
+          handleRawValueChange={handleRawValueChange}
           continueToNextStage={continueToNextStage} 
         />}
         {stage === LockStage.BURN && 
@@ -520,6 +539,13 @@ const BuyModal: React.FC<any> = ({ variant="user", location='fromStake', pool, s
         <EraseDebtStage 
           state={state} 
           handleChange={handleChange} 
+          continueToNextStage={continueToNextStage} 
+        />}
+        {stage === LockStage.UPDATE_ADMIN && 
+        <UpdateAdminStage 
+          state={state} 
+          handleChange={handleChange} 
+          handleRawValueChange={handleRawValueChange}
           continueToNextStage={continueToNextStage} 
         />}
       {stagesWithApproveButton.includes(stage) && (

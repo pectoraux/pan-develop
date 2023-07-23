@@ -112,13 +112,13 @@ export function PoolControls<T>({
   const stakedOnlyFinishedPools = useMemo(
     () =>
       finishedPools.filter((pool) => {
-        return pool.userData && new BigNumber(pool.userData.stakedBalance).isGreaterThan(0);
+        return pool?.owner?.toLowerCase() === account?.toLowerCase();
       }),
     [finishedPools]
   );
   const stakedOnlyOpenPools = useCallback(() => {
     return openPoolsWithStartBlockFilter.filter((pool) => {
-      return pool.userData && new BigNumber(pool.userData.stakedBalance).isGreaterThan(0);
+        return pool?.owner?.toLowerCase() === account?.toLowerCase();
     });
   }, [openPoolsWithStartBlockFilter]);
   const hasStakeInFinishedPools = stakedOnlyFinishedPools.length > 0;
@@ -151,13 +151,13 @@ export function PoolControls<T>({
 
   chosenPools = useMemo(() => {
     const sortedPools = sortPools<T>(account, sortOption, chosenPools).slice(0, numberOfPoolsVisible)
-    .filter((p: any) => favoritesOnly ? watchlistTokens.includes(p.rampAddress) : true)
+    .filter((p: any) => favoritesOnly ? watchlistTokens.includes(p?.id?.toLowerCase()) : true)
 
 
     if (searchQuery) {
       const lowercaseQuery = latinise(searchQuery.toLowerCase());
-      return sortedPools.filter((pool) =>
-        latinise(pool?.earningToken?.symbol?.toLowerCase() || "").includes(lowercaseQuery)
+      return sortedPools.filter((pool: any) =>
+        latinise(pool?.tokenId || "").includes(lowercaseQuery)
       );
     }
     return sortedPools;
@@ -191,43 +191,11 @@ export function PoolControls<T>({
           setViewMode={setViewMode}
         />
         <FilterContainer>
-          <LabelWrapper>
-            <Text fontSize="12px" bold color="textSubtle" textTransform="uppercase">
-              {t("Sort by")}
-            </Text>
-            <ControlStretch>
-              <Select
-                options={[
-                  {
-                    label: t("Hot"),
-                    value: "hot",
-                  },
-                  {
-                    label: t("APR"),
-                    value: "apr",
-                  },
-                  {
-                    label: t("Earned"),
-                    value: "earned",
-                  },
-                  {
-                    label: t("Total staked"),
-                    value: "totalStaked",
-                  },
-                  {
-                    label: t("Latest"),
-                    value: "latest",
-                  },
-                ]}
-                onOptionChange={handleSortOptionChange}
-              />
-            </ControlStretch>
-          </LabelWrapper>
           <LabelWrapper style={{ marginLeft: 16 }}>
             <Text fontSize="12px" bold color="textSubtle" textTransform="uppercase">
               {t("Search")}
             </Text>
-            <SearchInput initialValue={searchQuery} onChange={handleChangeSearchQuery} placeholder="Search Pools" />
+            <SearchInput initialValue={searchQuery} onChange={handleChangeSearchQuery} placeholder={t("Search pay card ids")} />
           </LabelWrapper>
         </FilterContainer>
       </PoolControlsView>

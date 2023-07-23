@@ -145,7 +145,7 @@ const config: (
           href: '/cards',
         },
         {
-          label: t('Future Collateral'),
+          label: t('Future Collaterals'),
           href: '/futureCollaterals',
         },
         {

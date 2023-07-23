@@ -27,6 +27,8 @@ import { Token } from '@pancakeswap/sdk'
 import { useAppDispatch } from 'state'
 import { setCurrPoolData } from 'state/cards'
 import { useCurrPool } from 'state/cards/hooks'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
+import { getCardAddress } from 'utils/addressHelpers'
 import WebPagesModal from './WebPagesModal'
 import WebPagesModal2 from './WebPagesModal2'
 
@@ -46,13 +48,14 @@ const PoolStatsInfo: React.FC<any> = ({
   const [pendingTx, setPendingTx] = useState(false)
   const { cardAddress } = pool
   const currState = useCurrPool()
-  const currProtocol = pool?.accounts?.find((acct) => acct?.id === currState[pool?.id])
-  const earningToken = currProtocol?.token
-  const tokenAddress = earningToken?.address || ''
+  const { chainId } = useActiveWeb3React()
+  const currProtocol = pool?.balances?.find((acct) => acct?.id === currState[pool?.id])
+  const earningToken = currProtocol
+  const tokenAddress = currProtocol?.tokenAddress || ''
   const dispatch = useAppDispatch()
   const [onPresentNotes] = useModal(<WebPagesModal height="500px" nfts={pool?.notes} />)
   const [onPresentNFTs] = useModal(<WebPagesModal2 height="500px" nfts={currProtocol?.tokens} />)
-  
+
   const SmartContractIcon: React.FC<React.PropsWithChildren<SvgProps>> = (props) => {
     return (
       <Svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 -15 122.000000 122.000000" {...props}>
@@ -87,28 +90,23 @@ const PoolStatsInfo: React.FC<any> = ({
   }
 
   // const [onPresentPayChat] = useModal(<QuizModal title="PayChat" link="https://matrix.to/#/!aGnoPysxAyEOUwXcJW:matrix.org?via=matrix.org" />)
+  const SCAN_DOMAIN = {
+    56: 'bscscan',
+    97: 'testnet.bscscan',
+    4002: 'testnet.ftmscan'
+  }
 
   return (
     <Flex flexDirection='column' maxHeight='200px' overflow='auto'>
       <Box><ReactMarkdown>{pool?.collection?.description}</ReactMarkdown></Box>
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/info/token/${earningToken?.address}`} bold={false} small>
+        <LinkExternal href={`https://${SCAN_DOMAIN[chainId]}.com/address/${tokenAddress}`} bold={false} small>
           {t('See Token Info')}
         </LinkExternal>
       </Flex>
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/info/token/${cardAddress}`} bold={false} small>
+        <LinkExternal href={`https://${SCAN_DOMAIN[chainId]}.com/address/${getCardAddress()}`} bold={false} small>
           {t('See Contract Info')}
-        </LinkExternal>
-      </Flex>
-      <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/info/token/${pool?.devaddr_}`} bold={false} small>
-          {t('See Admin Info')}
-        </LinkExternal>
-      </Flex>
-      <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/cancan/${pool?.collectionId}`} bold={false} small>
-          {t('See Admin Channel')}
         </LinkExternal>
       </Flex>
       {account && tokenAddress && (
@@ -155,39 +153,6 @@ const PoolStatsInfo: React.FC<any> = ({
         >
           {t('Clear')}
         </Button>:null}
-      </Flex>
-      <Flex>
-          <FlexGap gap="16px" pt="24px" pl="4px">
-            <IconButton as={Link} style={{ cursor: "pointer" }} 
-            // onClick={onPresentProject}
-            >
-              <LanguageIcon color="textSubtle" />
-            </IconButton>
-            <IconButton as={Link} style={{ cursor: "pointer" }} 
-            // onClick={onPresentArticle}
-            >
-              <ProposalIcon color="textSubtle" />
-            </IconButton>
-            <IconButton as={Link} style={{ cursor: "pointer" }} 
-            // onClick={onPresentPayChat}
-            >
-              <SmartContractIcon color="textSubtle" />
-            </IconButton>
-            {true && (
-              <IconButton as={Link} style={{ cursor: "pointer" }} 
-              // onClick={onPresentTwitter}
-              >
-                <TwitterIcon color="textSubtle" />
-              </IconButton>
-            )}
-            {true && (
-              <IconButton as={Link} style={{ cursor: "pointer" }} 
-              // onClick={onPresentTelegram}
-              >
-                <TelegramIcon color="textSubtle" />
-              </IconButton>
-            )}
-          </FlexGap>
       </Flex>
     </Flex>
   )

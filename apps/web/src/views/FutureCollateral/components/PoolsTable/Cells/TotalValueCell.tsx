@@ -17,9 +17,8 @@ const StyledCell = styled(BaseCell)`
   flex: 2 0 100px;
 `
 
-const TotalValueCell: React.FC<any> = ({ decimals, labelText, value, symbol }) => {
+const TotalValueCell: React.FC<any> = ({ labelText, value }) => {
   const { isMobile } = useMatchBreakpoints()
-  const totalStakedBalance = useMemo(() => getBalanceNumber(new BigNumber(value), decimals ?? 18), [value, decimals])
 
   return (
     <StyledCell role="cell">
@@ -34,9 +33,8 @@ const TotalValueCell: React.FC<any> = ({ decimals, labelText, value, symbol }) =
               bold={!isMobile}
               fontSize={isMobile ? '14px' : '16px'}
               color={Number(value) ? 'primary' : 'textDisabled'}
-              decimals={5}
-              unit={` ${symbol ?? ''}`}
-              value={Number(value) ? totalStakedBalance : 0}
+              decimals={0}
+              value={Number(value)}
             />
           </Box>
           </Flex>
