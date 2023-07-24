@@ -7,7 +7,7 @@ import { FixedSubgraphHealthIndicator } from 'components/SubgraphHealthIndicator
 import { useAccountEventListener } from 'hooks/useAccountEventListener'
 import useEagerConnect from 'hooks/useEagerConnect'
 import useEagerConnectMP from 'hooks/useEagerConnect.bmp'
-import useSentryUser from 'hooks/useSentryUser'
+// import useSentryUser from 'hooks/useSentryUser'
 import useThemeCookie from 'hooks/useThemeCookie'
 import useUserAgent from 'hooks/useUserAgent'
 import { NextPage } from 'next'
@@ -21,7 +21,7 @@ import { persistor, useStore } from 'state'
 import { usePollBlockNumber } from 'state/block/hooks'
 import TransactionsDetailModal from 'components/TransactionDetailModal'
 import { Blocklist, Updaters } from '..'
-import { SentryErrorBoundary } from '../components/ErrorBoundary'
+// import { SentryErrorBoundary } from '../components/ErrorBoundary'
 import Menu from '../components/Menu'
 import Providers from '../Providers'
 import GlobalStyle from '../style/Global'
@@ -39,7 +39,7 @@ function GlobalHooks() {
   useEagerConnect()
   useUserAgent()
   useAccountEventListener()
-  useSentryUser()
+  // useSentryUser()
   useThemeCookie()
   return null
 }
@@ -49,7 +49,7 @@ function MPGlobalHooks() {
   useEagerConnectMP()
   useUserAgent()
   useAccountEventListener()
-  useSentryUser()
+  // useSentryUser()
   return null
 }
 
@@ -128,7 +128,9 @@ type AppPropsWithLayout = AppProps & {
   Component: NextPageWithLayout
 }
 
-const ProductionErrorBoundary = process.env.NODE_ENV === 'production' ? SentryErrorBoundary : Fragment
+const ProductionErrorBoundary = process.env.NODE_ENV === 'production' ? null
+: Fragment
+// SentryErrorBoundary 
 
 const App = ({ Component, pageProps }: AppPropsWithLayout) => {
   if (Component.pure) {

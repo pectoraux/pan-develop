@@ -164,5 +164,10 @@ const config = {
 }
 
 export default withBundleAnalyzer(
-  withVanillaExtract(withSentryConfig(withTM(withAxiom(config)), sentryWebpackPluginOptions)),
+  withVanillaExtract(
+    // withSentryConfig(
+      withTM(withAxiom(config))
+      // , sentryWebpackPluginOptions
+      // )
+      ),
 )
