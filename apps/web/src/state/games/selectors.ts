@@ -12,7 +12,7 @@ const selectFilteredData = (state: State) => {
   (!state.games.filters.city || state.games.filters.city === 'All' ||  ramp?.city?.toLowerCase() === state.games.filters.city?.toLowerCase()) 
   )
 }
-const selectPoolData = (sousId) => (state: State) => state.games.data.find((p) => parseInt(p.sousId) === parseInt(sousId))
+const selectPoolData = (sousId) => (state: State) => state.games.data.find((p) => parseInt(p.id) === parseInt(sousId))
 const selectUserDataLoaded = (state: State) => state.games.userDataLoaded
 
 export const makePoolWithUserDataLoadingSelector = (sousId) =>

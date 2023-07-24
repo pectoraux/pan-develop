@@ -41,8 +41,8 @@ const NameCell: React.FC<any> = ({ pool, symbol }) => {
           <Flex flexDirection="row">
             {title}
             <SaveIcon 
-              fill={watchlistTokens.includes(pool?.id)} 
-              onClick={() => addWatchlistToken(pool?.id)} 
+              fill={watchlistTokens.includes(pool?.timestamp)} 
+              onClick={() => addWatchlistToken(pool?.timestamp)} 
               style={{ marginLeft: "10px", position: "relative", top: "-5px" }}
             />
           </Flex>

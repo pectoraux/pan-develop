@@ -24,6 +24,7 @@ import { Token } from '@pancakeswap/sdk'
 import { useAppDispatch } from 'state'
 import { setCurrPoolData } from 'state/ramps'
 import { useCurrPool } from 'state/ramps/hooks'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import WebPagesModal from './WebPagesModal'
 
 interface ExpandedFooterProps {
@@ -45,8 +46,9 @@ const PoolStatsInfo: React.FC<any> = ({
   const tokenAddress = earningToken?.address || ''
   const dispatch = useAppDispatch()
   const currState = useCurrPool()
+  const { chainId } = useActiveWeb3React()
   const [onPresentNFTs] = useModal(<WebPagesModal height="500px" nfts={pool?.nfts} />)
-
+  console.log("onPresentNFTs====================>", pool)
   const goToARP = () => {
     if (isBounty) {
       router.push(`/ramps/bounties/`)
@@ -89,7 +91,11 @@ const PoolStatsInfo: React.FC<any> = ({
   }
 
   // const [onPresentPayChat] = useModal(<QuizModal title="PayChat" link="https://matrix.to/#/!aGnoPysxAyEOUwXcJW:matrix.org?via=matrix.org" />)
-
+  const SCAN_DOMAIN = {
+    56: 'bscscan',
+    97: 'testnet.bscscan',
+    4002: 'testnet.ftmscan'
+  }
   return (
     <Flex flexDirection='column' maxHeight='200px' overflow='auto'>
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
@@ -112,49 +118,44 @@ const PoolStatsInfo: React.FC<any> = ({
             {t('View All Accounts')}
           </Button>
       </Flex>
-      <Flex flex="1" flexDirection="column" alignSelf="flex-center">
-        <Text color="primary" fontSize="14px">
+      {/* <Flex flex="1" flexDirection="column" alignSelf="flex-center"> */}
+        {/* <Text color="primary" fontSize="14px">
           {t("Cosign Enabled")} {`->`} {pool?.cosignEnabled ? t("True") : t("False")}
         </Text>
         {pool.cosignEnabled ?
           <Text color="primary" fontSize="14px">
           {t("Minimum Cosigners")} {`->`} {pool?.minCosigners}
-        </Text>:null}
+        </Text>:null} */}
         {/* {pool?.valueName ?
         <Text color="primary" fontSize="14px">
           {t("Testimony value")} {`->`} {pool?.valueName}
         </Text>:null} */}
-        {pool?.country ?
+        {/* {pool?.country ?
           <Text color="primary" fontSize="14px">
           {t("Country")} {`->`} {pool.country}
         </Text>:null}
         {pool?.city ?
           <Text color="primary" fontSize="14px">
           {t("City")} {`->`} {pool.city}
-        </Text>:null}
-      </Flex>
+        </Text>:null} */}
+      {/* </Flex> */}
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/info/token/${earningToken?.address}`} bold={false} small>
-          {t('See Token Info')}
+        <LinkExternal href={`https://${SCAN_DOMAIN[chainId]}.com/address/${pool?.rampAddress}`} bold={false} small>
+          {t('See Ramp Info')}
         </LinkExternal>
       </Flex>
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/info/token/${pool?.ft_}`} bold={false} small>
-          {t('See Native Token Info')}
+        <LinkExternal href={`https://${SCAN_DOMAIN[chainId]}.com/address/${pool?.owner}`} bold={false} small>
+          {t('See Owner Info')}
         </LinkExternal>
       </Flex>
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/info/token/${pool?.nft_}`} bold={false} small>
-          {t('See InvoiceNFT Info')}
-        </LinkExternal>
-      </Flex>
-      <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/info/token/${pool?.devaddr_}`} bold={false} small>
+        <LinkExternal href={`https://${SCAN_DOMAIN[chainId]}.com/address/${pool?.devaddr_}`} bold={false} small>
           {t('See Admin Info')}
         </LinkExternal>
       </Flex>
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={earningToken?.projectLink} bold={false} small>
+        <LinkExternal href={`/cancan/collections/${pool?.collectionId}`} bold={false} small>
           {t('See Admin Channel')}
         </LinkExternal>
       </Flex>

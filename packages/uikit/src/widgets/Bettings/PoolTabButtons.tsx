@@ -72,7 +72,7 @@ const PoolTabButtons = ({
 
   const { t } = useTranslation();
 
-  const isExact = router.pathname.includes('games/bounties/admin')
+  const isExact = router.pathname.includes('bettings/bounties/admin')
   
   const viewModeToggle = <ToggleView idPrefix="clickPool" viewMode={viewMode} onToggle={setViewMode} />;
 
@@ -92,7 +92,7 @@ const PoolTabButtons = ({
   const stakedOnlySwitch = (
     <ToggleWrapper>
       <Toggle checked={stakedOnly} onChange={() => setStakedOnly(!stakedOnly)} scale="sm" />
-      <Text> {t("Staked only")}</Text>
+      <Text> {t("Mine only")}</Text>
     </ToggleWrapper>
   );
   

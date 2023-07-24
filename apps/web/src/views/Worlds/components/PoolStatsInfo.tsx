@@ -27,6 +27,7 @@ import ReactMarkdown from 'components/ReactMarkdown'
 import { useAppDispatch } from 'state'
 import { setCurrPoolData } from 'state/worlds'
 import { useCurrPool } from 'state/worlds/hooks'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import WebPagesModal from './WebPagesModal'
 
 interface ExpandedFooterProps {
@@ -49,6 +50,7 @@ const PoolStatsInfo: React.FC<any> = ({
   const earningToken = currState[pool?.id]
   const tokenAddress = earningToken?.address || ''
   const dispatch = useAppDispatch()
+  const { chainId } = useActiveWeb3React()
   const [onPresentNFTs] = useModal(<WebPagesModal height="500px" worldNFTs={pool?.worldNFTs} />)
   const [onPresentNotes] = useModal(<WebPagesModal height="500px" worldNFTs={pool?.notes} />)
 
@@ -94,7 +96,11 @@ const PoolStatsInfo: React.FC<any> = ({
   }
 
   // const [onPresentPayChat] = useModal(<QuizModal title="PayChat" link="https://matrix.to/#/!aGnoPysxAyEOUwXcJW:matrix.org?via=matrix.org" />)
-
+  const SCAN_DOMAIN = {
+    56: 'bscscan',
+    97: 'testnet.bscscan',
+    4002: 'testnet.ftmscan'
+  }
   return (
     <Flex flexDirection='column' maxHeight='200px' overflow='auto'>
       <Box><ReactMarkdown>{pool?.collection?.description}</ReactMarkdown></Box>
@@ -134,32 +140,38 @@ const PoolStatsInfo: React.FC<any> = ({
         <Text color="primary" fontSize="14px">
           {t("Trading Fee")} {`->`} {parseInt(pool?.tradingFee) / 100}%
         </Text>
-        {pool?.collection?.country ?
+        {pool?.collection?.countries ?
           <Text color="primary" fontSize="14px">
-          {t("Country")} {`->`} {pool.collection.country}
+          {t("Countries")} {`->`} {pool.collection.countries}
         </Text>:null}
-        {pool?.collection?.city ?
+        {pool?.collection?.cities ?
           <Text color="primary" fontSize="14px">
-          {t("City")} {`->`} {pool.collection.city}
+          {t("Cities")} {`->`} {pool.collection.cities}
         </Text>:null}
       </Flex>
+      {earningToken?.address ?
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/info/token/${earningToken?.address}`} bold={false} small>
+        <LinkExternal href={`https://${SCAN_DOMAIN[chainId]}.com/address/${earningToken?.address}`} bold={false} small>
           {t('See Token Info')}
         </LinkExternal>
-      </Flex>
+      </Flex>:null}
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={pool?.worldAddress} bold={false} small>
+        <LinkExternal href={`https://${SCAN_DOMAIN[chainId]}.com/address/${pool?.worldAddress}`} bold={false} small>
           {t('See World Contract')}
         </LinkExternal>
       </Flex>
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/info/token/${pool?.devaddr_}`} bold={false} small>
+        <LinkExternal href={`https://${SCAN_DOMAIN[chainId]}.com/address/${pool?.owner}`} bold={false} small>
+          {t('See Owner Info')}
+        </LinkExternal>
+      </Flex>
+      <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
+        <LinkExternal href={`https://${SCAN_DOMAIN[chainId]}.com/address/${pool?.devaddr_}`} bold={false} small>
           {t('See Admin Info')}
         </LinkExternal>
       </Flex>
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/cancan/${pool?.collectionId}`} bold={false} small>
+        <LinkExternal href={`/cancan/collections/${pool?.collectionId}`} bold={false} small>
           {t('See Admin Channel')}
         </LinkExternal>
       </Flex>
@@ -207,7 +219,7 @@ const PoolStatsInfo: React.FC<any> = ({
           {balance.protocolId}
         </Button>
         ))
-        : <Skeleton width={180} height="32px" mb="2px" />}
+        : null}
         {pool?.accounts?.length ? 
         <Button 
           key="clear-all" 

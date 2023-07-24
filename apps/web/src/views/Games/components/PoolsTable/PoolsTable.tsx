@@ -41,7 +41,7 @@ const PoolsTable: React.FC<any> = ({ pools, account, urlSearch }) => {
           <PoolRow
             initialActivity={urlSearch.toLowerCase() === pool?.token?.symbol?.toLowerCase()}
             key={pool.sousId}
-            sousId={pool.sousId}
+            sousId={pool.id}
             account={account}
           />:
           <BountyRow

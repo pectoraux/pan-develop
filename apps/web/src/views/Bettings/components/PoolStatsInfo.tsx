@@ -27,6 +27,7 @@ import { Token } from '@pancakeswap/sdk'
 import { useAppDispatch } from 'state'
 import { setCurrPoolData } from 'state/bettings'
 import { useCurrPool } from 'state/bettings/hooks'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import WebPagesModal from './WebPagesModal'
 
 interface ExpandedFooterProps {
@@ -47,6 +48,7 @@ const PoolStatsInfo: React.FC<any> = ({
   const tokenAddress = earningToken?.address || ''
   const dispatch = useAppDispatch()
   const currState = useCurrPool()
+  const { chainId } = useActiveWeb3React()
   const [onPresentNFTs] = useModal(<WebPagesModal height="500px" pool={pool} />)
 
   const SmartContractIcon: React.FC<React.PropsWithChildren<SvgProps>> = (props) => {
@@ -83,7 +85,11 @@ const PoolStatsInfo: React.FC<any> = ({
   }
 
   // const [onPresentPayChat] = useModal(<QuizModal title="PayChat" link="https://matrix.to/#/!aGnoPysxAyEOUwXcJW:matrix.org?via=matrix.org" />)
-
+  const SCAN_DOMAIN = {
+    56: 'bscscan',
+    97: 'testnet.bscscan',
+    4002: 'testnet.ftmscan'
+  }
   return (
     <Flex flexDirection='column' maxHeight='200px' overflow='auto'>
       <Box><ReactMarkdown>{pool?.collection?.description}</ReactMarkdown></Box>
@@ -108,20 +114,35 @@ const PoolStatsInfo: React.FC<any> = ({
           </Button>
       </Flex>
       <Flex flex="1" flexDirection="column" alignSelf="flex-center">
-        {pool?.collection?.country ?
+        {pool?.collection?.countries ?
           <Text color="primary" fontSize="14px">
-          {t("Country")} {`->`} {pool.collection.country}
+          {t("Countries")} {`->`} {pool.collection.countries}
         </Text>:null}
-        {pool?.collection?.city ?
+        {pool?.collection?.cities ?
           <Text color="primary" fontSize="14px">
-          {t("City")} {`->`} {pool.collection.city}
+          {t("Cities")} {`->`} {pool.collection.cities}
+        </Text>:null}
+        {pool?.collection?.products ?
+          <Text color="primary" fontSize="14px">
+          {t("Tags")} {`->`} {pool.collection.products}
         </Text>:null}
       </Flex>
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/info/token/${pool?.devaddr_}`} bold={false} small>
+        <LinkExternal href={`https://${SCAN_DOMAIN[chainId]}.com/address/${pool?.owner}`} bold={false} small>
+          {t('See Owner Info')}
+        </LinkExternal>
+      </Flex>
+      <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
+        <LinkExternal href={`https://${SCAN_DOMAIN[chainId]}.com/address/${pool?.devaddr_}`} bold={false} small>
           {t('See Admin Info')}
         </LinkExternal>
       </Flex>
+      {Number(pool?.collectionId) ?
+      <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
+        <LinkExternal href={`/cancan/collections/${pool?.collectionId}`} bold={false} small>
+          {t('See Admin Channel')}
+        </LinkExternal>
+      </Flex>:null}
       {currState && currState[pool?.id] ?
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
         <LinkExternal style={{ cursor: "pointer" }} onClick={onPresentNFTs} bold={false} small>

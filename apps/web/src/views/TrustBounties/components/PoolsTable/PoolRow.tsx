@@ -38,7 +38,7 @@ const PoolRow: React.FC<React.PropsWithChildren<{
     >
       <NameCell pool={pool} symbol={token?.symbol} />
       <TotalUsersCell pool={pool} labelText={t("Total Users")} />
-      <TotalValueCell pool={pool} labelText={t("Total Liquidity")} value={pool?.totalLiquidity} symbol={token?.symbol} />
+      <TotalValueCell pool={pool} labelText={t("Total Liquidity")} value={pool?.totalLiquidity} symbol={token?.symbol ?? ''} />
       <DateInfoCell labelText={t("Next Payable/Receivable")} pool={pool} />
     </ExpandRow>
   )

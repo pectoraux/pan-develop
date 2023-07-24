@@ -44,8 +44,8 @@ const NameCell: React.FC<any> = ({ pool, rampAccount }) => {
           <Flex flexDirection="row">
             {title}
             <SaveIcon 
-              fill={watchlistTokens.includes(pool?.rampAddress)} 
-              onClick={() => addWatchlistToken(pool?.rampAddress)} 
+              fill={watchlistTokens.includes(pool?.id)} 
+              onClick={() => addWatchlistToken(pool?.id)} 
               style={{ marginLeft: "10px", position: "relative", top: "-5px" }}
             />
           </Flex>

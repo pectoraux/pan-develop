@@ -30,6 +30,7 @@ import { useAppDispatch } from 'state'
 import { setCurrPoolData } from 'state/valuepools'
 import { useCurrPool } from 'state/valuepools/hooks'
 import getTimePeriods from 'utils/getTimePeriods'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import WebPagesModal from './WebPagesModal'
 import WebPagesModal2 from './WebPagesModal2'
 
@@ -58,6 +59,7 @@ const PoolStatsInfo: React.FC<any> = ({
   const tokenAddress = valuepoolAddress || ''
   const dispatch = useAppDispatch()
   const currState = useCurrPool()
+  const { chainId } = useActiveWeb3React()
   const [onPresentNFTs] = useModal(<WebPagesModal height="500px" nfts={pool?.tokens} />)
   const [onPresentNFT] = useModal(<WebPagesModal2 height="500px" pool={pool} />,)
 
@@ -96,7 +98,11 @@ const PoolStatsInfo: React.FC<any> = ({
 
   const { days: daysDuration, hours: hoursDuration, minutes: minutesDuration } = getTimePeriods(Number(pool?.queueDuration ?? '0'))
   // const [onPresentPayChat] = useModal(<QuizModal title="PayChat" link="https://matrix.to/#/!aGnoPysxAyEOUwXcJW:matrix.org?via=matrix.org" />)
-
+  const SCAN_DOMAIN = {
+    56: 'bscscan',
+    97: 'testnet.bscscan',
+    4002: 'testnet.ftmscan'
+  }
   return (
     <Flex flexDirection='column' maxHeight='200px' overflow='auto'>
       <Box><ReactMarkdown>{pool.description}</ReactMarkdown></Box>
@@ -176,42 +182,42 @@ const PoolStatsInfo: React.FC<any> = ({
         </Text>:null}
         {pool?.countries ?
           <Text color="primary" fontSize="14px">
-          {t("Country")} {`->`} {pool.country}
+          {t("Country")} {`->`} {pool.countries}
         </Text>:null}
         {pool?.cities ?
           <Text color="primary" fontSize="14px">
-          {t("City")} {`->`} {pool.city}
+          {t("City")} {`->`} {pool.cities}
         </Text>:null}
-        {pool?.product ?
+        {pool?.products ?
           <Text color="primary" fontSize="14px">
-          {t("Product Tags")} {`->`} {pool.product}
+          {t("Tags")} {`->`} {pool.products}
         </Text>:null}
       </Flex>
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/info/token/${pool.tokenAddress}`} bold={false} small>
+        <LinkExternal href={`https://${SCAN_DOMAIN[chainId]}.com/address/${pool.tokenAddress}`} bold={false} small>
           {t('See Token Info')}
         </LinkExternal>
       </Flex>
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/info/token/${pool?._va}`} bold={false} small>
-          {t('See Va Token Info')}
+        <LinkExternal href={`https://${SCAN_DOMAIN[chainId]}.com/address/${pool?.ve}`} bold={false} small>
+          {t('See Ve Token Info')}
         </LinkExternal>
       </Flex>
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/info/token/${pool?.id}`} bold={false} small>
+        <LinkExternal href={`https://${SCAN_DOMAIN[chainId]}.com/address/${pool?.id}`} bold={false} small>
           {t('See Vava Contract Info')}
         </LinkExternal>
       </Flex>
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/info/token/${pool?.devaddr_}`} bold={false} small>
+        <LinkExternal href={`https://${SCAN_DOMAIN[chainId]}.com/address/${pool?.devaddr_}`} bold={false} small>
           {t('See Admin Info')}
         </LinkExternal>
       </Flex>
-      <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
+      {/* <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
         <LinkExternal href={earningToken?.projectLink} bold={false} small>
           {t('See Admin Channel')}
         </LinkExternal>
-      </Flex>
+      </Flex> */}
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
         <LinkExternal style={{ cursor: "pointer" }} onClick={onPresentNFTs} bold={false} small>
           {t('View NFTs')}

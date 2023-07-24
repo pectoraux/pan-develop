@@ -109,16 +109,21 @@ export function PoolControls<T>({
     () => openPools.filter((pool) => (threshHold > 0 && pool.startBlock ? Number(pool.startBlock) < threshHold : true)),
     [threshHold, openPools]
   );
+  
   const stakedOnlyFinishedPools = useMemo(
     () =>
       finishedPools.filter((pool) => {
-        return pool.userData && new BigNumber(pool.userData.stakedBalance).isGreaterThan(0);
+        return router.pathname.includes('valuepools') 
+        ? pool.devaddr_?.toLowerCase() === account?.toLowerCase()
+        : pool.owner?.toLowerCase() === account?.toLowerCase();
       }),
     [finishedPools]
   );
   const stakedOnlyOpenPools = useCallback(() => {
     return openPoolsWithStartBlockFilter.filter((pool) => {
-      return pool.userData && new BigNumber(pool.userData.stakedBalance).isGreaterThan(0);
+      return router.pathname.includes('valuepools') 
+      ? pool.devaddr_?.toLowerCase() === account?.toLowerCase()
+      : pool.owner?.toLowerCase() === account?.toLowerCase();
     });
   }, [openPoolsWithStartBlockFilter]);
   const hasStakeInFinishedPools = stakedOnlyFinishedPools.length > 0;
@@ -151,13 +156,21 @@ export function PoolControls<T>({
 
   chosenPools = useMemo(() => {
     const sortedPools = sortPools<T>(account, sortOption, chosenPools).slice(0, numberOfPoolsVisible)
-    .filter((p: any) => favoritesOnly ? watchlistTokens.includes(p.rampAddress) : true)
+    .filter((p: any) => favoritesOnly ? watchlistTokens.includes(
+      router.pathname.includes("valuepools")
+      ? p?.valuepoolAddress
+      : p.timestamp
+    ) : true)
 
 
     if (searchQuery) {
       const lowercaseQuery = latinise(searchQuery.toLowerCase());
-      return sortedPools.filter((p: { earningToken: { symbol: string; }; }) =>
-        latinise(p?.earningToken?.symbol?.toLowerCase() || "").includes(lowercaseQuery)
+      return sortedPools.filter((p: any) =>
+        latinise(
+          router.pathname.includes("valuepools")
+          ? p?.devaddr_?.toLowerCase() || ""
+          : p?.owner?.toLowerCase() || "").includes(lowercaseQuery) ||
+        latinise(p?.id || "").includes(lowercaseQuery)
       );
     }
     return sortedPools;
@@ -191,43 +204,11 @@ export function PoolControls<T>({
           setViewMode={setViewMode}
         />
         <FilterContainer>
-          <LabelWrapper>
-            <Text fontSize="12px" bold color="textSubtle" textTransform="uppercase">
-              {t("Sort by")}
-            </Text>
-            <ControlStretch>
-              <Select
-                options={[
-                  {
-                    label: t("Hot"),
-                    value: "hot",
-                  },
-                  {
-                    label: t("APR"),
-                    value: "apr",
-                  },
-                  {
-                    label: t("Earned"),
-                    value: "earned",
-                  },
-                  {
-                    label: t("Total staked"),
-                    value: "totalStaked",
-                  },
-                  {
-                    label: t("Latest"),
-                    value: "latest",
-                  },
-                ]}
-                onOptionChange={handleSortOptionChange}
-              />
-            </ControlStretch>
-          </LabelWrapper>
           <LabelWrapper style={{ marginLeft: 16 }}>
             <Text fontSize="12px" bold color="textSubtle" textTransform="uppercase">
               {t("Search")}
             </Text>
-            <SearchInput initialValue={searchQuery} onChange={handleChangeSearchQuery} placeholder="Search Pools" />
+            <SearchInput initialValue={searchQuery} onChange={handleChangeSearchQuery} placeholder={t("Search by addresses")} />
           </LabelWrapper>
         </FilterContainer>
       </PoolControlsView>

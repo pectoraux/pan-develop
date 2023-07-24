@@ -16,6 +16,7 @@ import {
 import { useTranslation } from '@pancakeswap/localization'
 import AddToWalletButton, { AddToWalletTextOptions } from 'components/AddToWallet/AddToWalletButton'
 import { Token } from '@pancakeswap/sdk'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
 
 interface ExpandedFooterProps {
   pool?: any
@@ -35,6 +36,7 @@ const PoolStatsInfo: React.FC<any> = ({
       arpAddress: pool.arpAddress
     }},[pool])
   const tokenAddress = earningToken?.address || ''
+  const { chainId } = useActiveWeb3React()
   const SmartContractIcon: React.FC<SvgProps> = (props) => {
     return (
       <Svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 -15 122.000000 122.000000" {...props}>
@@ -67,6 +69,11 @@ const PoolStatsInfo: React.FC<any> = ({
     )
   }
   // const [onPresentPayChat] = useModal(<QuizModal title="PayChat" link="https://matrix.to/#/!aGnoPysxAyEOUwXcJW:matrix.org?via=matrix.org" />)
+  const SCAN_DOMAIN = {
+    56: 'bscscan',
+    97: 'testnet.bscscan',
+    4002: 'testnet.ftmscan'
+  }
 
   return (
     <Flex flexDirection='column'>
@@ -97,45 +104,40 @@ const PoolStatsInfo: React.FC<any> = ({
         <Text color="primary" fontSize="14px">
           {t("Testimony value")} {`->`} {pool.valueName}
         </Text>:null}
-        {pool?.workspace ?
+        {pool?.collection?.workspace ?
         <Text color="primary" fontSize="14px">
           {t("Workspace")} {`->`} {pool.workspace}
         </Text>:null}
-        {pool?.country ?
+        {pool?.collection?.countries ?
           <Text color="primary" fontSize="14px">
-          {t("Country")} {`->`} {pool.country}
+          {t("Countries")} {`->`} {pool.collection.countries}
         </Text>:null}
-        {pool?.city ?
+        {pool?.collection?.cities ?
           <Text color="primary" fontSize="14px">
-          {t("City")} {`->`} {pool.city}
+          {t("Cities")} {`->`} {pool.collection?.cities}
         </Text>:null}
-        {pool?.product ?
+        {pool?.collection?.products ?
           <Text color="primary" fontSize="14px">
-          {t("Product Tags")} {`->`} {pool.product}
+          {t("Tags")} {`->`} {pool.collection?.products}
         </Text>:null}
       </Flex>
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/info/token/${pool.tokenAddress}`} bold={false} small>
+        <LinkExternal href={`https://${SCAN_DOMAIN[chainId]}.com/address/${pool.tokenAddress}`} bold={false} small>
           {t('See Token Info')}
         </LinkExternal>
       </Flex>
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/info/token/${pool?.ve}`} bold={false} small>
-          {t('See Voter token Info')}
+        <LinkExternal href={`https://${SCAN_DOMAIN[chainId]}.com/address/${pool?.owner}`} bold={false} small>
+          {t('See Owner Info')}
         </LinkExternal>
       </Flex>
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/info/token/${pool?.nft_}`} bold={false} small>
-          {t('See InvoiceNFT Info')}
-        </LinkExternal>
-      </Flex>
-      <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/info/token/${pool?.devaddr_}`} bold={false} small>
+        <LinkExternal href={`https://${SCAN_DOMAIN[chainId]}.com/address/${pool?.collection?.owner}`} bold={false} small>
           {t('See Admin Info')}
         </LinkExternal>
       </Flex>
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={earningToken?.projectLink} bold={false} small>
+        <LinkExternal href={`/cancan/collections/${pool?.collection?.id}`} bold={false} small>
           {t('See Admin Channel')}
         </LinkExternal>
       </Flex>

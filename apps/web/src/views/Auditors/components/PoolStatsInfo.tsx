@@ -27,6 +27,7 @@ import { Token } from '@pancakeswap/sdk'
 import { useAppDispatch } from 'state'
 import { setCurrPoolData } from 'state/auditors'
 import { useCurrPool } from 'state/auditors/hooks'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import WebPagesModal from './WebPagesModal'
 import WebPagesModal2 from './WebPagesModal2'
 
@@ -50,6 +51,7 @@ const PoolStatsInfo: React.FC<any> = ({
   const earningToken = currProtocol?.token
   const tokenAddress = earningToken?.address || ''
   const dispatch = useAppDispatch()
+  const { chainId } = useActiveWeb3React()
   const [onPresentNotes] = useModal(<WebPagesModal height="500px" nfts={pool?.notes} />)
   const [onPresentNFTs] = useModal(<WebPagesModal2 height="500px" nfts={currProtocol?.tokens} />)
   
@@ -87,7 +89,11 @@ const PoolStatsInfo: React.FC<any> = ({
   }
 
   // const [onPresentPayChat] = useModal(<QuizModal title="PayChat" link="https://matrix.to/#/!aGnoPysxAyEOUwXcJW:matrix.org?via=matrix.org" />)
-
+  const SCAN_DOMAIN = {
+    56: 'bscscan',
+    97: 'testnet.bscscan',
+    4002: 'testnet.ftmscan'
+  }
   return (
     <Flex flexDirection='column' maxHeight='200px' overflow='auto'>
       <Box><ReactMarkdown>{pool?.collection?.description}</ReactMarkdown></Box>
@@ -125,25 +131,21 @@ const PoolStatsInfo: React.FC<any> = ({
         </Text>:null}
       </Flex>
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/info/token/${earningToken?.address}`} bold={false} small>
-          {t('See Token Info')}
-        </LinkExternal>
-      </Flex>
-      <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/info/token/${auditorAddress}`} bold={false} small>
+        <LinkExternal href={`https://${SCAN_DOMAIN[chainId]}.com/address/${pool?.id}`} bold={false} small>
           {t('See Contract Info')}
         </LinkExternal>
       </Flex>
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/info/token/${pool?.devaddr_}`} bold={false} small>
+        <LinkExternal href={`https://${SCAN_DOMAIN[chainId]}.com/address/${pool?.owner}`} bold={false} small>
           {t('See Admin Info')}
         </LinkExternal>
       </Flex>
+      {pool?.collection?.id ? 
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/cancan/${pool?.collectionId}`} bold={false} small>
+        <LinkExternal href={`/cancan/collections/${pool?.collection?.id}`} bold={false} small>
           {t('See Admin Channel')}
         </LinkExternal>
-      </Flex>
+      </Flex>: null}
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
         <LinkExternal style={{ cursor: "pointer" }} onClick={onPresentNotes} bold={false} small>
           {t('View Notes')}
@@ -189,7 +191,7 @@ const PoolStatsInfo: React.FC<any> = ({
           {balance?.protocolId}
         </Button>
         ))
-        : <Skeleton width={180} height="32px" mb="2px" />}
+        : null}
         {pool?.accounts?.length ? 
         <Button 
           key="clear-all" 

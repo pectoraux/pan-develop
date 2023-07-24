@@ -27,6 +27,7 @@ import { Token } from '@pancakeswap/sdk'
 import { useAppDispatch } from 'state'
 import { setCurrPoolData } from 'state/lotteries'
 import { useCurrPool } from 'state/lotteries/hooks'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
 
 interface ExpandedFooterProps {
   pool?: any
@@ -46,6 +47,7 @@ const PoolStatsInfo: React.FC<any> = ({
   const tokenAddress = earningToken?.address || ''
   const dispatch = useAppDispatch()
   const currState = useCurrPool()
+  const { chainId } = useActiveWeb3React()
 
   const SmartContractIcon: React.FC<React.PropsWithChildren<SvgProps>> = (props) => {
     return (
@@ -81,7 +83,11 @@ const PoolStatsInfo: React.FC<any> = ({
   }
 
   // const [onPresentPayChat] = useModal(<QuizModal title="PayChat" link="https://matrix.to/#/!aGnoPysxAyEOUwXcJW:matrix.org?via=matrix.org" />)
-
+  const SCAN_DOMAIN = {
+    56: 'bscscan',
+    97: 'testnet.bscscan',
+    4002: 'testnet.ftmscan'
+  }
   return (
     <Flex flexDirection='column' maxHeight='200px' overflow='auto'>
       <Box><ReactMarkdown>{pool?.lotteryDescription}</ReactMarkdown></Box>
@@ -116,23 +122,23 @@ const PoolStatsInfo: React.FC<any> = ({
         </Text>:null}
       </Flex>
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/info/token/${pool?.valuepool}`} bold={false} small>
+        <LinkExternal href={`https://${SCAN_DOMAIN[chainId]}.com/address/${pool?.valuepool}`} bold={false} small>
           {t('See Valuepool Info')}
         </LinkExternal>
       </Flex>
       {currState[pool?.id] ?
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/info/token/${currState[pool?.id]?.address}`} bold={false} small>
+        <LinkExternal href={`https://${SCAN_DOMAIN[chainId]}.com/address/${currState[pool?.id]?.address}`} bold={false} small>
           {t('See Current Token Info')}
         </LinkExternal>
       </Flex>:null}
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/info/token/${pool?.owner}`} bold={false} small>
+        <LinkExternal href={`https://${SCAN_DOMAIN[chainId]}.com/address/${pool?.owner}`} bold={false} small>
           {t('See Admin Info')}
         </LinkExternal>
       </Flex>
       <Flex mb="2px" justifyContent={alignLinksToRight ? 'flex-end' : 'flex-start'}>
-        <LinkExternal href={`/cancan/${pool?.collectionId}`} bold={false} small>
+        <LinkExternal href={`/cancan/collections/${pool?.collectionId}`} bold={false} small>
           {t('See Admin Channel')}
         </LinkExternal>
       </Flex>
