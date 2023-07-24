@@ -105,10 +105,10 @@ export const client = createClient({
   connectors: [
     new SafeConnector({ chains }),
     metaMaskConnector,
-    // injectedConnector,
-    // coinbaseConnector,
-    // walletConnectConnector,
-    // bscConnector,
+    injectedConnector,
+    coinbaseConnector,
+    walletConnectConnector,
+    bscConnector,
   ],
 })
 
