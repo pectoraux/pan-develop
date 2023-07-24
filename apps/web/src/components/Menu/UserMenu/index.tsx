@@ -76,12 +76,12 @@ const UserMenu = () => {
         <ProfileUserMenuItem
           isLoading={isLoading}
           hasProfile={hasProfile}
-          disabled={isWrongNetwork || chainId !== ChainId.FANTOM_TESTNET}
+          disabled={isWrongNetwork || chainId !== ChainId.BSC_TESTNET}
         />
         <CanCanUserMenuItem
           isLoading={isLoading}
           hasChannel={hasChannel}
-          disabled={isWrongNetwork || chainId !== ChainId.FANTOM_TESTNET}
+          disabled={isWrongNetwork || chainId !== ChainId.BSC_TESTNET}
         />
         <UserMenuDivider />
         <UserMenuItem as="button" onClick={logout}>

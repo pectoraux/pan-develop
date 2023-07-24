@@ -138,19 +138,19 @@ export const BUSD: Record<ChainId, ERC20Token> = {
   [ChainId.GOERLI]: BUSD_GOERLI,
   [ChainId.BSC]: BUSD_BSC,
   [ChainId.BSC_TESTNET]: BUSD_TESTNET,
-  [ChainId.FANTOM_TESTNET]: BUSD_TESTNET,
+  [ChainId.BSC_TESTNET]: BUSD_TESTNET,
 }
 
 export const CAKE = {
   [ChainId.BSC]: CAKE_MAINNET,
   [ChainId.BSC_TESTNET]: CAKE_TESTNET,
-  [ChainId.FANTOM_TESTNET]: CAKE_TESTNET,
+  [ChainId.BSC_TESTNET]: CAKE_TESTNET,
 }
 
 export const USDC = {
   [ChainId.BSC]: USDC_BSC,
   [ChainId.BSC_TESTNET]: USDC_TESTNET,
-  [ChainId.FANTOM_TESTNET]: USDC_TESTNET,
+  [ChainId.BSC_TESTNET]: USDC_TESTNET,
   [ChainId.ETHEREUM]: USDC_ETH,
   [ChainId.RINKEBY]: USDC_RINKEBY,
   [ChainId.GOERLI]: USDC_GOERLI,
@@ -171,5 +171,5 @@ export const WBTC_ETH = new ERC20Token(
 
 export const TUSD = {
   [ChainId.BSC_TESTNET]: TUSD_TESTNET,
-  [ChainId.FANTOM_TESTNET]: TUSD_TESTNET,
+  [ChainId.BSC_TESTNET]: TUSD_TESTNET,
 }

@@ -426,13 +426,13 @@ export function useGasPrice(chainIdOverride?: number): string {
   )
   const { data } = useFeeData({
     chainId,
-    enabled: chainId !== ChainId.BSC && chainId !== ChainId.BSC_TESTNET && chainId !== ChainId.FANTOM_TESTNET,
+    enabled: chainId !== ChainId.BSC && chainId !== ChainId.BSC_TESTNET && chainId !== ChainId.BSC_TESTNET,
     watch: true,
   })
   if (chainId === ChainId.BSC) {
     return userGas === GAS_PRICE_GWEI.rpcDefault ? bscProviderGasPrice : userGas
   }
-  if (chainId === ChainId.BSC_TESTNET || chainId === ChainId.FANTOM_TESTNET) {
+  if (chainId === ChainId.BSC_TESTNET || chainId === ChainId.BSC_TESTNET) {
     return GAS_PRICE_GWEI.testnet
   }
   if (chain?.testnet) {
