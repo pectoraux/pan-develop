@@ -142,18 +142,19 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
   const ShowMenu = Component.mp ? Fragment : Menu
 
   return (
-    <ProductionErrorBoundary>
-      <ShowMenu>
-        <Layout>
-          <Component {...pageProps} />
-        </Layout>
-      </ShowMenu>
-      <EasterEgg iterations={2} />
-      <ToastListener />
-      <FixedSubgraphHealthIndicator />
-      <NetworkModal pageSupportedChains={Component.chains} />
-      <TransactionsDetailModal />
-    </ProductionErrorBoundary>
+    <></>
+    // <ProductionErrorBoundary>
+    //   <ShowMenu>
+    //     <Layout>
+    //       <Component {...pageProps} />
+    //     </Layout>
+    //   </ShowMenu>
+    //   <EasterEgg iterations={2} />
+    //   <ToastListener />
+    //   <FixedSubgraphHealthIndicator />
+    //   <NetworkModal pageSupportedChains={Component.chains} />
+    //   <TransactionsDetailModal />
+    // </ProductionErrorBoundary>
   )
 }
 
