@@ -143,9 +143,7 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
 
   return (
     <ProductionErrorBoundary>
-      <ShowMenu>
         ali
-      </ShowMenu>
     </ProductionErrorBoundary>
     // <ProductionErrorBoundary>
     //   <ShowMenu>
