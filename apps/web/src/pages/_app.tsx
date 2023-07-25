@@ -142,7 +142,11 @@ const App = ({ Component, pageProps }: AppPropsWithLayout) => {
   const ShowMenu = Component.mp ? Fragment : Menu
 
   return (
-    <></>
+    <ProductionErrorBoundary>
+      <ShowMenu>
+        ali
+      </ShowMenu>
+    </ProductionErrorBoundary>
     // <ProductionErrorBoundary>
     //   <ShowMenu>
     //     <Layout>
